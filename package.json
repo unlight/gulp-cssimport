@@ -1,0 +1,26 @@
+{
+	"name": "gulp-css-import",
+	"version": "1.0.0",
+	"description": "Parses css files, finds `@import` directive and includes these external files.",
+	"main": "gulp-css-import.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"event-stream": "3.1.X",
+		"through2": "0.4.X",
+		"gulp-util": "2.2.X"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://iamthes@bitbucket.org/iamthes/gulp-css-import.git"
+	},
+	"keywords": [
+		"gulpplugin"
+	],
+	"author":  {
+		"name": "S",
+		"url" : "http://rv-home.ru"
+	},
+	"license": "X.Net"
+}
