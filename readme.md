@@ -9,7 +9,7 @@ USAGE
 var gulp = require("gulp");
 var cssimport = require("gulp-cssimport");
 
-gulp.task("fixture2", function() {
+gulp.task("import", function() {
 	gulp.src("src/*.css")
 		.pipe(plugin())
 		.pipe(gulp.dest("dist/"));
