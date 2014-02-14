@@ -11,7 +11,7 @@ var cssimport = require("gulp-cssimport");
 
 gulp.task("import", function() {
 	gulp.src("src/*.css")
-		.pipe(plugin())
+		.pipe(cssimport())
 		.pipe(gulp.dest("dist/"));
 }); 
 ```
