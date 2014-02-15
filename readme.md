@@ -19,7 +19,7 @@ gulp.task("import", function() {
 KNOWN ISSUES
 ------------
 1. Cannot process minified files
-2. Cannot process urls [fixed in v1.1]
+2. Cannot process urls [fixed in v1.2]
 
 CHANGELOG
 ---------
@@ -27,4 +27,8 @@ CHANGELOG
 - first release
 
 1.1 [15 Feb 2014]
+- switched to through2
+- process files asynchronously
+
+1.2 [15 Feb 2014]
 - fixed processing urls
