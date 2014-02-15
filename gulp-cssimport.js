@@ -8,7 +8,6 @@ const format = require("util").format;
 const trim = require("useful-functions").trim;
 const extend = require("useful-functions").extend;
 const url = require("url");
-const MemoryStream = require('memorystream');
 const EventEmitter = require('events').EventEmitter;
 
 const PLUGIN_NAME = "gulp-css-import";
@@ -52,9 +51,6 @@ module.exports = function (options) {
 			if (importFile) {
 
 				if (isUrl(importFile)) {
-					
-					fail("Cannot process url %j.", importFile);
-					break start;
 
 					components = url.parse(importFile);
 					var protocol = trim(components["protocol"], ":");
@@ -64,11 +60,18 @@ module.exports = function (options) {
 					}
 					var http = require(protocol);
 					http.get(importFile, function(response) {
-						var memoryStream = new MemoryStream();
+						var body = "";
+						response.on("data", function(chunk) {
+							body += chunk;
+						})
 						response.on("end", function() {
-							console.log(arguments);
+							callback.apply(null, [null, body].concat(args));
+						});
+						response.on("error", function(error) {
+							callback.apply(null, [error]);
 						});
 					});
+					return;
 				}
 
 				var importFilePath = path.normalize(path.join(fileDirectory, importFile));
@@ -76,6 +79,10 @@ module.exports = function (options) {
 				function existsEnd(exists) {
 					fs.readFile(importFilePath, readFileEnd);
 					function readFileEnd(error, buffer) {
+						if (error) {
+							callback.apply(null, [error]);
+							return;
+						}
 						line = buffer.toString();
 						parsedFiles[importFilePath] = true;
 						callback.apply(null, [null, line].concat(args));
@@ -124,6 +131,10 @@ module.exports = function (options) {
 		});
 
 		function parseFileEnd(error, data, index, array) {
+			if (error) {
+				fileParse.emit("error", error);
+				return;
+			}
 			array[index] = data;
 			var args = Array.prototype.slice.call(arguments, 1);
 			if (--linesCount == 0) {
