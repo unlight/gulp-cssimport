@@ -1,13 +1,11 @@
 {
 	"name": "gulp-cssimport",
-	"version": "1.0.3",
-	"description": "Parses css files, finds `@import` directive and includes these external files.",
+	"version": "1.2.0",
+	"description": "Parses css files, finds `@import` directive and includes these files.",
 	"main": "gulp-cssimport.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
+	"scripts": {},
 	"dependencies": {
-		"through": "2.3.X",
+		"through2": "0.4.X",
 		"useful-functions": "1.0.X"
 	},
 	"devDependencies": {
@@ -18,7 +16,9 @@
 		"url": "https://github.com/unlight/gulp-cssimport.git"
 	},
 	"keywords": [
-		"gulpplugin", "css", "import"
+		"gulpplugin",
+		"css",
+		"import"
 	],
 	"author": {
 		"name": "S",
