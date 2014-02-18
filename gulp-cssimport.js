@@ -5,8 +5,8 @@ const File = gutil.File;
 const PluginError = gutil.PluginError;
 const through = require("through2");
 const format = require("util").format;
-const trim = require("useful-functions").trim;
-const extend = require("useful-functions").extend;
+const trim = require("useful-functions.js").trim;
+const extend = require("useful-functions.js").extend;
 const url = require("url");
 const EventEmitter = require('events').EventEmitter;
 
