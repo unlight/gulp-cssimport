@@ -6,7 +6,7 @@
 	"scripts": {},
 	"dependencies": {
 		"through2": "0.4.X",
-		"useful-functions": "1.0.X"
+		"useful-functions.js": "1.0.X"
 	},
 	"devDependencies": {
 		"gulp-util": "2.2.X"
