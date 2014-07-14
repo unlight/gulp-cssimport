@@ -19,3 +19,9 @@ gulp.task("fixture4", function() {
 		.pipe(gulp.dest("./fixture4_dest/"));
 });
 
+gulp.task("fixture5", function() {
+	gulp.src("fixture5/*")
+		.pipe(plugin())
+		.pipe(gulp.dest("./fixture5_dest/"));
+});
+

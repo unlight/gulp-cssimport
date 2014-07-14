@@ -44,8 +44,8 @@ module.exports = function (options) {
 			var args = Array.prototype.slice.call(arguments);
 			var line = args.shift();
 			
-			var match = line.match(/(@import\s+url\(((.+?)\)).*)/i);
-			var importFile = match && trim(match[3], "'\"");
+			var match = line.match(/@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/i);
+			var importFile = match && trim(match[1], "'\"");
 			
 			start:
 			if (importFile) {
