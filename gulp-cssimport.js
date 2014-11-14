@@ -11,7 +11,7 @@ var getExtension = require("useful-functions.js").getExtension;
 var url = require("url");
 var EventEmitter = require("events").EventEmitter;
 
-var PLUGIN_NAME = "gulp-css-import";
+var PLUGIN_NAME = "gulp-cssimport";
 
 function fail() {
 	var args = Array.prototype.slice.call(arguments);
