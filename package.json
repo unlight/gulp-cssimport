@@ -1,26 +1,37 @@
 {
-	"name": "gulp-cssimport",
-	"version": "1.2.3",
-	"description": "Parses css files, finds `@import` directive and includes these files.",
-	"main": "gulp-cssimport.js",
-	"scripts": {},
-	"dependencies": {
-		"through2": "0.4.X",
-		"useful-functions.js": "1.0.X",
-		"gulp-util": "2.2.X"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/unlight/gulp-cssimport.git"
-	},
-	"keywords": [
-		"gulpplugin",
-		"css",
-		"import"
-	],
-	"author": {
-		"name": "S",
-		"url": "http://rv-home.ru"
-	},
-	"license": "X.Net"
+  "name": "gulp-cssimport",
+  "version": "1.3.0",
+  "description": "Parses css files, finds `@import` directive and includes these files.",
+  "main": "gulp-cssimport.js",
+  "scripts": {
+    "test": "cd test && tape *.js | tap-spec && rm -rf tmp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unlight/gulp-cssimport.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "css",
+    "import"
+  ],
+  "dependencies": {
+    "gulp-util": "2.2.X",
+    "through2": "0.4.X",
+    "useful-functions.js": "1.0.X"
+  },
+  "devDependencies": {
+    "gulp": "3.8.X",
+    "gulp-bump": "0.1.X",
+    "gulp-eslint": "0.1.X",
+    "gulp-load-plugins": "0.7.X",
+    "minimist": "1.1.X",
+    "tap-spec": "1.0.X",
+    "tape": "3.0.X"
+  },
+  "author": {
+    "name": "S",
+    "url": "http://rv-home.ru"
+  },
+  "license": "X.Net"
 }

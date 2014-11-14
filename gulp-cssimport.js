@@ -1,26 +1,21 @@
-const gutil = require("gulp-util");
-const fs = require("fs");
-const path = require("path");
-const File = gutil.File;
-const PluginError = gutil.PluginError;
-const through = require("through2");
-const format = require("util").format;
-const trim = require("useful-functions.js").trim;
-const extend = require("useful-functions.js").extend;
-const url = require("url");
-const EventEmitter = require('events').EventEmitter;
+"use strict";
+var gutil = require("gulp-util");
+var fs = require("fs");
+var path = require("path");
+var File = gutil.File;
+var PluginError = gutil.PluginError;
+var through = require("through2");
+var format = require("util").format;
+var trim = require("useful-functions.js").trim;
+var getExtension = require("useful-functions.js").getExtension;
+var url = require("url");
+var EventEmitter = require("events").EventEmitter;
 
-const PLUGIN_NAME = "gulp-css-import";
-
-function ok() {
-	var args = Array.prototype.slice.call(arguments);
-	var message = format.apply(null, args)
-	gutil.log(PLUGIN_NAME, gutil.colors.green("✔ " + message));
-}
+var PLUGIN_NAME = "gulp-css-import";
 
 function fail() {
 	var args = Array.prototype.slice.call(arguments);
-	var message = format.apply(null, args)
+	var message = format.apply(null, args);
 	gutil.log(PLUGIN_NAME, gutil.colors.red("✘ " + message));
 }
 
@@ -29,32 +24,67 @@ function isUrl(s) {
 	return regexp.test(s);
 }
 
-var defaults = {};
+var defaults = {
+	extensions: null,
+	filter: null
+};
 
-module.exports = function (options) {
-	
+module.exports = function(options) {
+
 	options = options || {};
 	var parsedFiles = {};
 	var buffer = [];
+
+	var extensions = options.extensions;
+	if (extensions) {
+		if (!Array.isArray(extensions)) {
+			extensions = extensions.toString().split(",").map(function(x) {
+				return x.trim();
+			});
+		}
+	}
 
 	function parseLineFactory(filePath, callback) {
 		var fileDirectory = path.dirname(filePath);
 		return function parseLine(line) {
 
 			var args = Array.prototype.slice.call(arguments);
-			var line = args.shift();
-			
+			line = args.shift();
+
 			var match = line.match(/@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/i);
 			var importFile = match && trim(match[1], "'\"");
-			
+
 			start:
 			if (importFile) {
+				// Check extensions.
+				if (extensions) {
+					for (var k = 0; k < extensions.length; k++) {
+						var extension = extensions[k];
+						var isInverse = extension.charAt(0) === "!";
+						if (isInverse) {
+							extension = extension.slice(1);
+						}
+						var fileExt = getExtension(importFile);
+						if (isInverse && fileExt === extension) { // !sass , sass === css
+							break start;
+						} else if (!isInverse && fileExt !== extension) {
+							break start;
+						}
+					}
+				}
+
+				if (options.filter instanceof RegExp) {
+					var result = options.filter.test(importFile);
+					if (!result) {
+						break start;
+					}
+				}
 
 				if (isUrl(importFile)) {
 
-					components = url.parse(importFile);
-					var protocol = trim(components["protocol"], ":");
-					if (["http", "https"].indexOf(protocol) == -1) {
+					var components = url.parse(importFile) || {};
+					var protocol = trim(components.protocol, ":");
+					if (["http", "https"].indexOf(protocol) === -1) {
 						fail("Cannot process file %j, unknown protocol %j.", importFile, protocol);
 						break start;
 					}
@@ -63,7 +93,7 @@ module.exports = function (options) {
 						var body = "";
 						response.on("data", function(chunk) {
 							body += chunk;
-						})
+						});
 						response.on("end", function() {
 							callback.apply(null, [null, body].concat(args));
 						});
@@ -75,22 +105,18 @@ module.exports = function (options) {
 				}
 
 				var importFilePath = path.normalize(path.join(fileDirectory, importFile));
-				fs.exists(importFilePath, existsEnd);
-				function existsEnd(exists) {
-					fs.readFile(importFilePath, readFileEnd);
-					function readFileEnd(error, buffer) {
-						if (error) {
-							callback.apply(null, [error]);
-							return;
-						}
-						line = buffer.toString();
-						parsedFiles[importFilePath] = true;
-						callback.apply(null, [null, line].concat(args));
+				fs.readFile(importFilePath, function readFileEnd(error, buffer) {
+					if (error) {
+						callback.apply(null, [error]);
+						return;
 					}
-				}
+					line = buffer.toString();
+					parsedFiles[importFilePath] = true;
+					callback.apply(null, [null, line].concat(args));
+				});
 				return;
 			}
-			
+
 			callback.apply(null, [null, line].concat(args));
 		};
 	}
@@ -105,6 +131,7 @@ module.exports = function (options) {
 			throw new PluginError(PLUGIN_NAME, "Only buffer is supported.");
 		}
 
+		// TODO: Bug... Cannot process minified files.
 		var contents = file.contents.toString();
 		var lines = contents.split("\n");
 		var linesCount = lines.length;
@@ -112,7 +139,7 @@ module.exports = function (options) {
 
 		fileParse.on("ready", function(newLines) {
 			var newContents = newLines.join("\n");
-			if (contents != newContents) {
+			if (contents !== newContents) {
 				file = new File({
 					cwd: file.cwd,
 					base: file.base,
@@ -125,7 +152,7 @@ module.exports = function (options) {
 		});
 
 		// lines.forEach(parseLineFactory(file.path, parseLineEnd));
-		lines.forEach(function(line, index, array) {
+		lines.forEach(function() {
 			var args = Array.prototype.slice.call(arguments);
 			parseLineFactory(file.path, parseFileEnd).apply(this, args);
 		});
@@ -136,8 +163,7 @@ module.exports = function (options) {
 				return;
 			}
 			array[index] = data;
-			var args = Array.prototype.slice.call(arguments, 1);
-			if (--linesCount == 0) {
+			if (--linesCount === 0) {
 				fileParse.emit("ready", array);
 			}
 		}
