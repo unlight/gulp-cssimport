@@ -17,10 +17,10 @@ gulp.task("import", function() {
 
 OPTIONS
 -------
-**extensions**
-String or Array, default: null (process all)
+**extensions**  
+String or Array, default: null (process all).
 Case insensitive list of extension allowed to process.
-Any other non-matched lines will be leaved as is.
+Any other non-matched lines will be leaved as is.  
 Examples:
 ```js
 var options = {
@@ -30,10 +30,10 @@ var options = {
 	extensions: ["!less", "!sass"] // all except less and sass
 };
 ```
-**filter**
+**filter**  
 Process only files which match to regexp.
-RegExp, default: null (no filter)
-Any other non-matched lines will be leaved as is.
+RegExp, default: null (no filter).
+Any other non-matched lines will be leaved as is.  
 Example:
 ```js
 var options = {
