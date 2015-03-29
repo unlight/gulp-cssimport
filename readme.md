@@ -43,14 +43,14 @@ var options = {
 
 SIMILAR PROJECTS
 ----------------
-https://npmjs.org/package/gulp-coimport/
-https://npmjs.org/package/gulp-concat-css/
-https://www.npmjs.com/package/gulp-import-css/
-https://github.com/postcss/postcss-import
-https://www.npmjs.com/package/combine-css/
-https://github.com/suisho/gulp-cssjoin
-https://github.com/yuguo/gulp-import-css/
-https://github.com/jfromaniello/css-import
+https://npmjs.org/package/gulp-coimport/  
+https://npmjs.org/package/gulp-concat-css/  
+https://www.npmjs.com/package/gulp-import-css/  
+https://github.com/postcss/postcss-import  
+https://www.npmjs.com/package/combine-css/  
+https://github.com/suisho/gulp-cssjoin  
+https://github.com/yuguo/gulp-import-css/  
+https://github.com/jfromaniello/css-import  
 
 
 KNOWN ISSUES
