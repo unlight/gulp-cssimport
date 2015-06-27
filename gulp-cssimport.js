@@ -11,7 +11,7 @@ var defaults = {
 	filter: null
 };
 
-module.exports = function (options) {
+module.exports = function cssImport(options) {
 
 	options = options || {};
 
@@ -51,34 +51,41 @@ module.exports = function (options) {
 		}
 
 		function onResolvePath(err, data, pathObject) {
-			
 			fileArray[pathObject.index] = data;
 			count--;
 			if (count === 0) {
 				fileReady();
 			}
 		}
-
+		
+		// No import statements.
 		if (count === 0) {
-			callback(null, file);
+			fileReady({ done: true });
 			return;
 		}
 		
 		// Adding trailing piece.
 		fileArray[fileArray.length] = contents.slice(lastPos);
 
-		function fileReady() {
-			var newContents = fileArray.join("");
-			// todo: need check this for other imports... recursive
+		// todo: optimize do not scan all contents.
+		function fileReady(state) {
+			state = state || {};
+			if (fileArray.length > 0) {
+				contents = fileArray.join("");
+			}
+			if (!state.done) {
+				fileContents(contents, null, callback);
+				return;
+			}
 			if (isVinylFile) {
-				newContents = new gutil.File({
+				contents = new gutil.File({
 					cwd: file.cwd,
 					base: file.base,
 					path: file.path,
-					contents: new Buffer(newContents)
+					contents: new Buffer(contents)
 				});
 			}
-			callback(null, newContents);
+			callback(null, contents);
 		}
 
 	}
