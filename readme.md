@@ -1,6 +1,6 @@
 gulp-cssimport
 ==============
-Parses css files and insert file contents instead of `@import` directives.
+Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.
 
 USAGE
 -----
@@ -66,7 +66,6 @@ https://github.com/jfromaniello/css-import
 
 KNOWN ISSUES
 ------------
-- Possible problems with processing minified files
 - Cannot resolve `@import 'foo.css' (min-width: 25em);`
 
 CHANGELOG
@@ -87,8 +86,4 @@ CHANGELOG
 
 1.4 [27 Jun 2015]
 - changed parse algorithm
-- 
-
-TODO
-----
-- recursive import, using css-parse https://github.com/unlight/gulp-cssimport/issues/6
+- can handle recursive import

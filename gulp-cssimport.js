@@ -1,3 +1,4 @@
+/// <reference path="typings/node/node.d.ts" />
 "use strict";
 var gutil = require("gulp-util");
 var through = require("through2");
@@ -31,39 +32,43 @@ module.exports = function cssImport(options) {
 		} else {
 			throw new gutil.PluginError(PLUGIN_NAME, "Passed unknown object.");
 		}
-
-		var importRegExp = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig;
+		// https://github.com/kevva/import-regex/
+		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
+		var importRe = new RegExp(regex, "gi");
 		var match;
 		var fileArray = [];
 		var lastPos = 0;
 		var count = 0;
-		while ((match = importRegExp.exec(contents)) !== null) {
+		while ((match = importRe.exec(contents)) !== null) {
 			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
+			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
 			var pathObject = {
 				index: fileArray.length,
-				path: trim(match[1], "'\"")
+				path: trim(match2[1], "'\"")
 			};
 			fileArray[fileArray.length] = format("importing file %j", pathObject);
-			lastPos = importRegExp.lastIndex;
+			lastPos = importRe.lastIndex;
 			// Start resolving.
 			count++;
 			resolvePath(pathObject, onResolvePath);
 		}
-
+		
 		function onResolvePath(err, data, pathObject) {
+			if (err) {
+				callback(err);
+				return;
+			}
 			fileArray[pathObject.index] = data;
 			count--;
 			if (count === 0) {
 				fileReady();
 			}
 		}
-		
 		// No import statements.
 		if (count === 0) {
 			fileReady({ done: true });
 			return;
 		}
-		
 		// Adding trailing piece.
 		fileArray[fileArray.length] = contents.slice(lastPos);
 

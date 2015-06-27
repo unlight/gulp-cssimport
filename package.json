@@ -1,7 +1,7 @@
 {
   "name": "gulp-cssimport",
-  "version": "1.3.1",
-  "description": "Parses css files, finds `@import` directive and includes these files.",
+  "version": "1.4.0",
+  "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
     "test": "cd test && tape *.js | tap-spec && rm -rf tmp"
@@ -17,12 +17,13 @@
   ],
   "dependencies": {
     "gulp-util": "2.2.X",
+    "import-regex": "1.1.X",
     "phpjs": "^1.3.2",
     "through2": "0.4.X"
   },
   "devDependencies": {
     "collect-stream": "^1.0.0",
-    "gulp": "3.8.X",
+    "gulp": "^3.9.0",
     "gulp-bump": "0.1.X",
     "gulp-eslint": "0.1.X",
     "gulp-load-plugins": "0.7.X",
