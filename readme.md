@@ -41,6 +41,18 @@ var options = {
 };
 ```
 
+TIPS AND TRICKS
+---------------
+** Be more precise and do not add to src importing file without necessary: **  
+```css
+// main.css
+@import "a.css";
+@import "b.css";
+```
+If you will do `gulp.src("*.css")` gulp will read `a.css` and `b.css`,
+and plugin also will try to read these files. It is double job.  
+Do instead: `gulp.src("main.css")`
+
 SIMILAR PROJECTS
 ----------------
 https://npmjs.org/package/gulp-coimport/  
@@ -54,7 +66,8 @@ https://github.com/jfromaniello/css-import
 
 KNOWN ISSUES
 ------------
-- Cannot process minified files (will be fixed later)
+- Possible problems with processing minified files
+- Cannot resolve `@import 'foo.css' (min-width: 25em);`
 
 CHANGELOG
 ---------
@@ -71,6 +84,10 @@ CHANGELOG
 1.3 [14 Nov 2014]
 - added option 'extensions'
 - added option 'filter'
+
+1.4 [27 Jun 2015]
+- changed parse algorithm
+- 
 
 TODO
 ----
