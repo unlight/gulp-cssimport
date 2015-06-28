@@ -18,25 +18,6 @@ function isUrl(s) {
 
 exports.isUrl = isUrl;
 
-exports.resolvePath = function (pathObject, callback) {
-	var path = pathObject.path;
-	if (pathObject.isUrl()) {
-		var collect = require("collect-stream");
-		var hh = require("http-https");
-		var req = hh.request(path, function (res) {
-			collect(res, function (err, data) {
-				var content = data.toString();
-				callback(err, content, pathObject);
-			});
-		});
-		req.end();
-		return;
-	}
-	fs.readFile(path, { encoding: "utf8" }, function (err, data) {
-		callback(err, data, pathObject);
-	});
-};
-
 function isIgnored(path, options) {
 	if (!options) {
 		return false;

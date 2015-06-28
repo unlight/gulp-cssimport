@@ -7,7 +7,9 @@ var trim = require("phpjs/build/npm").trim;
 var resolvePath = require("./helper").resolvePath;
 var isIgnored = require("./helper").isIgnored;
 var PathObject = require("./pathObject");
+var Chunk = require("./chunk");
 var PLUGIN_NAME = "gulp-cssimport";
+var path = require("path");
 
 var defaults = {
 	extensions: null,
@@ -16,6 +18,7 @@ var defaults = {
 
 module.exports = function cssImport(options) {
 
+	// todo: settings
 	options = options || {};
 	if (options.extensions && !Array.isArray(options.extensions)) {
 		options.extensions = options.extensions.toString().split(",").map(function (x) {
@@ -23,23 +26,9 @@ module.exports = function cssImport(options) {
 		});
 	}
 
-
-	function fileContents(file, encoding, callback) {
-		if (file.path === null) {
-			throw new gutil.PluginError(PLUGIN_NAME, "File.path is null.");
-		}
-		var contents = "";
-		var isVinylFile = false;
-		if (file.isBuffer && file.isBuffer()) {
-			isVinylFile = true;
-			contents = file.contents.toString();
-		} else if (file instanceof Buffer) {
-			contents = file.toString();
-		} else if (typeof file === "string") {
-			contents = file;
-		} else {
-			throw new gutil.PluginError(PLUGIN_NAME, "Passed unknown object.");
-		}
+	function fileContents(data, encoding, callback) {
+		// todo: get directory from settings
+		var chunk = Chunk.create(data, { directory: process.cwd() });
 		// https://github.com/kevva/import-regex/
 		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
 		var importRe = new RegExp(regex, "gi");
@@ -47,36 +36,46 @@ module.exports = function cssImport(options) {
 		var fileArray = [];
 		var lastPos = 0;
 		var count = 0;
+		var contents = chunk.getContents();
 		while ((match = importRe.exec(contents)) !== null) {
 			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
-			var path = trim(match2[1], "'\"");
-			if (isIgnored(path, options)) {
+			var filePath = trim(match2[1], "'\"");
+			if (isIgnored(filePath, options)) {
 				continue;
 			}
 			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
 			var index = fileArray.length;
 			var pathObject = new PathObject({
 				index: index,
-				path: path
+				path: filePath,
+				directory: chunk.getDirectory()
 			});
 			fileArray[index] = format("importing file %j", pathObject);
 			lastPos = importRe.lastIndex;
 			// Start resolving.
 			count++;
-			resolvePath(pathObject, onResolvePath);
+			// todo: this is not object of pathObject. 
+			pathObject.resolvePath(onResolvePath);
 		}
 
 		function onResolvePath(err, data, pathObject) {
 			if (err) {
+				console.trace(err);
 				throw err;
-				// todo: Make more realiable
+				// todo: Make more realiable.
 				// callback(err);
 				// return;
 			}
 			fileArray[pathObject.index] = data;
 			count--;
 			if (count === 0) {
-				fileReady();
+				var state = {};
+				if (!pathObject.isUrl()) {
+					var importedFile = path.join(pathObject.directory, pathObject.path);
+					importedFile = path.normalize(importedFile);
+					state.directory = path.dirname(importedFile);
+				}
+				fileReady(state);
 			}
 		}
 		// No import statements.
@@ -95,17 +94,22 @@ module.exports = function cssImport(options) {
 			}
 			// todo: options for max recursive
 			if (!state.done) {
-				fileContents(contents, null, callback);
+				var nextChunk = Chunk.create({
+					contents: contents,
+					directory: state.directory
+				});
+				fileContents(nextChunk, null, callback);
 				return;
 			}
-			if (isVinylFile) {
-				contents = new gutil.File({
-					cwd: file.cwd,
-					base: file.base,
-					path: file.path,
-					contents: new Buffer(contents)
-				});
-			}
+			// todo: pass vinyl file 
+			// if (isVinylFile) {
+			// 	contents = new gutil.File({
+			// 		cwd: data.cwd,
+			// 		base: data.base,
+			// 		path: data.path,
+			// 		contents: new Buffer(contents)
+			// 	});
+			// }
 			callback(null, contents);
 		}
 

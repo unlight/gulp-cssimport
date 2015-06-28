@@ -1,38 +1,40 @@
-var merge = require("deepmerge"); 
+function Chunk(data) {
+	if (data.vfile) this.vfile = data.vfile;
+	if (data.path) this.path = data.path;
+	if (data.directory) this.directory = data.directory;
+	if (data.contents) this.contents = data.contents;
+}
 
-function Chunk(data, options) {
+Chunk.create = function (data, options) {
 	options = options || {};
+	var result = null;
 	if (data == null) {
 		throw "Passed null or undefined argument.";
 	}
-	this.directory = null;
-	if (data instanceof Chunk) {
-		return data;
-	} else if (data.isBuffer && data.isBuffer()) {
-		this.vfile = data;
+	if (data.isBuffer && data.isBuffer()) {
+		result = new Chunk({
+			vfile: data
+		});
 	} else if (data instanceof Buffer) {
-		this.contents = data.toString();
+		result = new Chunk({
+			contents: data.toString()
+		});
 	} else if (typeof data === "string") {
-		this.contents = data;
+		result = new Chunk({ contents: data });
 	} else if (typeof data === "object" && data.constructor === Object) {
-		options = merge(data, options);
+		result = new Chunk(data);
+	} else if (data instanceof Chunk) {
+		result = data;
 	} else {
 		throw "Passed unknown object.";
 	}
-	
-	if (options.path) this.path = options.path;
-	if (options.directory) this.directory = options.directory;
-	if (options.contents) this.contents = options.contents;
-}
+	// Add additional properties.
+	if (result.directory == null && options.directory) result.directory = options.directory;
+	return result;
+};
 
-Chunk.prototype.getCwd = function () {
-	if (this.vfile) {
-		return this.vfile.base;
-	}
-	if (this.directory) {
-		return this.directory;
-	}
-	throw "W?";
+Chunk.prototype.getDirectory = function () {
+	return this.directory;
 };
 
 Chunk.prototype.getContents = function () {
@@ -42,7 +44,7 @@ Chunk.prototype.getContents = function () {
 	if (this.vfile) {
 		return this.vfile.contents.toString();
 	}
-	throw "Uknowkn type.";
+	throw "Uknown type.";
 };
 
 module.exports = Chunk;

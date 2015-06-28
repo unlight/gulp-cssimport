@@ -17,7 +17,7 @@ test("Complete", function (t) {
 	})
 		.pipe(plugin());
 	collect(stream, function (err, data) {
-		//fs.writeFileSync("x.css", data);
+		// fs.writeFileSync("x.css", data);
 		t.equal(data, result);
 		t.end();
 	});
