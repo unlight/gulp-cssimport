@@ -5,6 +5,8 @@ var through = require("through2");
 var format = require("util").format;
 var trim = require("phpjs/build/npm").trim;
 var resolvePath = require("./helper").resolvePath;
+var isIgnored = require("./helper").isIgnored;
+var PathObject = require("./helper").PathObject;
 var PLUGIN_NAME = "gulp-cssimport";
 
 var defaults = {
@@ -15,6 +17,12 @@ var defaults = {
 module.exports = function cssImport(options) {
 
 	options = options || {};
+	if (options.extensions && !Array.isArray(options.extensions)) {
+		options.extensions = options.extensions.toString().split(",").map(function (x) {
+			return x.trim();
+		});
+	}
+
 
 	function fileContents(file, encoding, callback) {
 		if (file.path === null) {
@@ -40,19 +48,24 @@ module.exports = function cssImport(options) {
 		var lastPos = 0;
 		var count = 0;
 		while ((match = importRe.exec(contents)) !== null) {
-			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
 			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
-			var pathObject = {
-				index: fileArray.length,
-				path: trim(match2[1], "'\"")
-			};
-			fileArray[fileArray.length] = format("importing file %j", pathObject);
+			var path = trim(match2[1], "'\"");
+			if (isIgnored(path, options)) {
+				continue;
+			}
+			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
+			var index = fileArray.length;
+			var pathObject = new PathObject({
+				index: index,
+				path: path
+			});
+			fileArray[index] = format("importing file %j", pathObject);
 			lastPos = importRe.lastIndex;
 			// Start resolving.
 			count++;
 			resolvePath(pathObject, onResolvePath);
 		}
-		
+
 		function onResolvePath(err, data, pathObject) {
 			if (err) {
 				callback(err);
@@ -78,6 +91,7 @@ module.exports = function cssImport(options) {
 			if (fileArray.length > 0) {
 				contents = fileArray.join("");
 			}
+			// todo: options for max recursive
 			if (!state.done) {
 				fileContents(contents, null, callback);
 				return;
