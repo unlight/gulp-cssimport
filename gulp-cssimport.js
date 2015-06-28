@@ -2,12 +2,11 @@
 "use strict";
 var through = require("through2");
 var format = require("util").format;
-var trim = require("phpjs/build/npm").trim;
-//var resolvePath = require("./helper").resolvePath;
-// var PLUGIN_NAME = "gulp-cssimport";
 var path = require("path");
 var merge = require("deepmerge");
 var isIgnored = require("./helper").isIgnored;
+var resolvePath = require("./helper").resolvePath;
+var trim = require("./helper").trim;
 var PathObject = require("./pathObject");
 var Chunk = require("./chunk");
 
@@ -28,7 +27,6 @@ module.exports = function cssImport(options) {
 	}
 
 	function fileContents(data, encoding, callback) {
-		// todo: get directory from settings
 		var chunk = Chunk.create(data, { directory: options.directory });
 		// https://github.com/kevva/import-regex/
 		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
@@ -55,15 +53,14 @@ module.exports = function cssImport(options) {
 			lastPos = importRe.lastIndex;
 			// Start resolving.
 			count++;
-			// todo: this is not object of pathObject. 
-			pathObject.resolvePath(onResolvePath);
+			resolvePath(pathObject, onResolvePath);
 		}
 
 		function onResolvePath(err, data, pathObject) {
 			if (err) {
 				console.trace(err);
 				throw err;
-				// todo: Make more realiable.
+				// todo: Make it more realiable.
 				// callback(err);
 				// return;
 			}
@@ -72,9 +69,7 @@ module.exports = function cssImport(options) {
 			if (count === 0) {
 				var state = {};
 				if (!pathObject.isUrl()) {
-					var importedFile = path.join(pathObject.directory, pathObject.path);
-					importedFile = path.normalize(importedFile);
-					state.directory = path.dirname(importedFile);
+					state.directory = pathObject.getPathDirectory();
 				}
 				fileReady(state);
 			}

@@ -1,5 +1,9 @@
 var fs = require("fs");
 var gutil = require("gulp-util");
+var collect = require("collect-stream");
+var hh = require("http-https");
+var fs = require("fs");
+var path = require("path");
 var PLUGIN_NAME = "gulp-cssimport";
 
 function getExtension(p) {
@@ -52,3 +56,24 @@ function isIgnored(path, options) {
 };
 
 exports.isIgnored = isIgnored;
+
+exports.resolvePath = function (po, callback) {
+	var filePath = po.path;
+	if (po.isUrl()) {
+		var req = hh.request(filePath, function (res) {
+			collect(res, function (err, data) {
+				var content = data.toString();
+				callback(err, content, po);
+			});
+		});
+		req.end();
+		return;
+	}
+
+	filePath = path.join(po.directory, po.path);
+	filePath = path.normalize(filePath);
+
+	fs.readFile(filePath, { encoding: "utf8" }, function (err, data) {
+		callback(err, data, po);
+	});
+};
