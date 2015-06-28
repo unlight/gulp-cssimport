@@ -5,12 +5,16 @@ var fs = require("fs");
 var collect = require("collect-stream");
 var plugin = require("../..");
 
-test("Urls", function (t) {
+var options = {
+	filter: /^http:\/\//gi
+}
+
+test("Options filter http", function (t) {
+	var result = fs.readFileSync("result.css", { encoding: "utf8" });
 	var stream = fs.createReadStream("style.css", { encoding: "utf8" })
-		.pipe(plugin());
+		.pipe(plugin(options));
 	collect(stream, function (err, data) {
-		// var pos = data.indexOf("font-family: 'Tangerine'");
-		// t.notEqual(pos, -1);
+		t.equal(data, result);
 		t.end();
 	});
 });

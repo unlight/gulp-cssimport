@@ -6,10 +6,10 @@ var collect = require("collect-stream");
 var plugin = require("../..");
 
 var options = {
-	extensions: ["css"]
+	extensions: ["!sass", "!less"]
 }
 
-test("Options extensions only", function (t) {
+test("Options extensions exclude", function (t) {
 	var result = fs.readFileSync("result.css", { encoding: "utf8" });
 	var stream = fs.createReadStream("style.css", { encoding: "utf8" })
 		.pipe(plugin(options));
