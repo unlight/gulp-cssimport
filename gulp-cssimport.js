@@ -1,25 +1,26 @@
 /// <reference path="typings/node/node.d.ts" />
 "use strict";
-var gutil = require("gulp-util");
 var through = require("through2");
 var format = require("util").format;
 var trim = require("phpjs/build/npm").trim;
-var resolvePath = require("./helper").resolvePath;
+//var resolvePath = require("./helper").resolvePath;
+// var PLUGIN_NAME = "gulp-cssimport";
+var path = require("path");
+var merge = require("deepmerge");
 var isIgnored = require("./helper").isIgnored;
 var PathObject = require("./pathObject");
 var Chunk = require("./chunk");
-var PLUGIN_NAME = "gulp-cssimport";
-var path = require("path");
 
 var defaults = {
 	extensions: null,
-	filter: null
+	filter: null,
+	directory: process.cwd()
 };
 
 module.exports = function cssImport(options) {
 
-	// todo: settings
-	options = options || {};
+	options = merge(defaults, options || {});
+
 	if (options.extensions && !Array.isArray(options.extensions)) {
 		options.extensions = options.extensions.toString().split(",").map(function (x) {
 			return x.trim();
@@ -28,7 +29,7 @@ module.exports = function cssImport(options) {
 
 	function fileContents(data, encoding, callback) {
 		// todo: get directory from settings
-		var chunk = Chunk.create(data, { directory: process.cwd() });
+		var chunk = Chunk.create(data, { directory: options.directory });
 		// https://github.com/kevva/import-regex/
 		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
 		var importRe = new RegExp(regex, "gi");
