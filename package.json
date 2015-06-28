@@ -4,7 +4,7 @@
   "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
-    "test": "cd test && tape *.js | tap-spec && rm -rf tmp"
+    "test": "cd test && node index.js"
   },
   "repository": {
     "type": "git",
@@ -16,10 +16,11 @@
     "import"
   ],
   "dependencies": {
+    "collect-stream": "^1.0.0",
+    "deepmerge": "^0.2.10",
     "gulp-util": "2.2.X",
     "http-https": "^1.0.0",
     "phpjs": "^1.3.2",
-    "collect-stream": "^1.0.0",
     "through2": "0.4.X"
   },
   "devDependencies": {

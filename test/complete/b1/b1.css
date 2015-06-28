@@ -1,0 +1,3 @@
+/* b1.css */
+@import "../b2/b2.css";
+strong {font-weight: bold}

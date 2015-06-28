@@ -5,10 +5,12 @@ var fs = require("fs");
 var collect = require("collect-stream");
 var plugin = require("../..");
 
-test("Urls", function (t) {
-	var stream = fs.createReadStream("style.css", { encoding: "utf8" })
+test("Urls", function(t) {
+	var stream = fs.createReadStream("style.css", {
+			encoding: "utf8"
+		})
 		.pipe(plugin());
-	collect(stream, function (err, data) {
+	collect(stream, function(err, data) {
 		var pos = data.indexOf("font-family: 'Tangerine'");
 		t.notEqual(pos, -1);
 		t.end();
