@@ -6,7 +6,7 @@ var format = require("util").format;
 var trim = require("phpjs/build/npm").trim;
 var resolvePath = require("./helper").resolvePath;
 var isIgnored = require("./helper").isIgnored;
-var PathObject = require("./helper").PathObject;
+var PathObject = require("./pathObject");
 var PLUGIN_NAME = "gulp-cssimport";
 
 var defaults = {
@@ -68,8 +68,10 @@ module.exports = function cssImport(options) {
 
 		function onResolvePath(err, data, pathObject) {
 			if (err) {
-				callback(err);
-				return;
+				throw err;
+				// todo: Make more realiable
+				// callback(err);
+				// return;
 			}
 			fileArray[pathObject.index] = data;
 			count--;

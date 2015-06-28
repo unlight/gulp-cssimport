@@ -71,16 +71,3 @@ function isIgnored(path, options) {
 };
 
 exports.isIgnored = isIgnored;
-
-function PathObject(data) {
-	this.index = data.index;
-	this.path = data.path;
-};
-
-PathObject.prototype.isUrl = function () {
-	var result = isUrl(this.path);
-	return result;
-};
-
-exports.PathObject = PathObject;
-
