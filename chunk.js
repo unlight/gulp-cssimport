@@ -1,6 +1,5 @@
 function Chunk(data) {
 	if (data.vfile) this.vfile = data.vfile;
-	if (data.path) this.path = data.path;
 	if (data.directory) this.directory = data.directory;
 	if (data.contents) this.contents = data.contents;
 
@@ -35,7 +34,7 @@ Chunk.create = function (data, options) {
 		throw "Passed unknown object.";
 	}
 	// Add additional properties.
-	if (result.directory == null && options.directory) result.directory = options.directory;
+	if (result.getDirectory() == null && options.directory) result.directory = options.directory;
 	return result;
 };
 
