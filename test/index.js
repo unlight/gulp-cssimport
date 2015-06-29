@@ -10,6 +10,7 @@ var tests = [
 	"options-extensions-only",
 	"options-filter",
 	"complete",
+	"gulp-complete"
 ];
 emitter.on("run", function(index) {
 	var name = tests[index];

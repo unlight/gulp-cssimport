@@ -17,7 +17,7 @@ var defaults = {
 };
 Object.defineProperty(defaults, "directory", {
 	enumerable: true,
-	get: function() {
+	get: function () {
 		return process.cwd();
 	}
 });
@@ -25,7 +25,7 @@ Object.defineProperty(defaults, "directory", {
 module.exports = function cssImport(options) {
 
 	options = deepExtend({}, defaults, options || {});
-	
+
 	if (options.extensions && !Array.isArray(options.extensions)) {
 		options.extensions = options.extensions.toString().split(",").map(function (x) {
 			return x.trim();
@@ -34,6 +34,7 @@ module.exports = function cssImport(options) {
 
 	function fileContents(data, encoding, callback) {
 		var chunk = Chunk.create(data, { directory: options.directory });
+		//console.log("chunk.isVinyl", chunk.isVinyl);
 		// https://github.com/kevva/import-regex/
 		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
 		var importRe = new RegExp(regex, "gi");
@@ -73,7 +74,7 @@ module.exports = function cssImport(options) {
 			fileArray[pathObject.index] = data;
 			count--;
 			if (count === 0) {
-				var state = {};
+				var state = { directory: pathObject.directory };
 				if (!pathObject.isUrl()) {
 					state.directory = pathObject.getPathDirectory();
 				}
@@ -96,14 +97,24 @@ module.exports = function cssImport(options) {
 			}
 			// todo: options for max recursive
 			if (!state.done) {
-				var nextChunk = Chunk.create({
-					contents: contents,
-					directory: state.directory
-				});
+				//console.log("chunk.isVinyl", chunk.isVinyl);
+				var nextChunk;
+				if (chunk.isVinyl) {
+					chunk.vinyl.contents = new Buffer(contents);
+					chunk.vinyl.base = state.directory; 
+					nextChunk = chunk.vinyl;
+				} else {
+					nextChunk = Chunk.create({
+						contents: contents,
+						directory: state.directory
+					});
+				}
+				//console.log("state", state);
 				fileContents(nextChunk, null, callback);
 				return;
 			}
-			if (chunk.isVinylFile) {
+			//console.log("chunk.isVinyl", chunk.isVinyl);
+			if (chunk.isVinyl) {
 				contents = new gutil.File({
 					cwd: data.cwd,
 					base: data.base,

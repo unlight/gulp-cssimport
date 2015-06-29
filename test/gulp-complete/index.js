@@ -4,19 +4,22 @@ var test = require("tape");
 var fs = require("fs");
 var collect = require("collect-stream");
 var plugin = require("../..");
+var gulp = require("gulp");
 
 var options = {
 };
 
-test("Complete", function (t) {
+test("Gulp complete", function (t) {
 	var result = fs.readFileSync("result.css", { encoding: "utf8" });
-	var stream = fs.createReadStream("style.css", {
-		encoding: "utf8"
-	})
-		.pipe(plugin(options));
+	var stream = gulp.src("design/style.css")
+		.pipe(plugin(options))
+		.pipe(gulp.dest("/dev/null"));
 	collect(stream, function (err, data) {
+		var file = data[0];
+		data = file.contents.toString();
 		// fs.writeFileSync("x.css", data);
 		t.equal(data, result);
 		t.end();
 	});
+
 });

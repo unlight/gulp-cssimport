@@ -29,6 +29,13 @@ function isIgnored(path, options) {
 	if (!path) {
 		return true;
 	}
+	var filter = (options || {}).filter;
+	if (filter instanceof RegExp) {
+		var result = filter.test(path);
+		if (!result) {
+			return true;
+		}
+	}
 	var extensions = (options || {}).extensions;
 	if (extensions) {
 		var fileExt = getExtension(path);
@@ -43,13 +50,6 @@ function isIgnored(path, options) {
 			} else if (!isInverse && fileExt !== extension) {
 				return true;
 			}
-		}
-	}
-	var filter = (options || {}).filter;
-	if (filter instanceof RegExp) {
-		var result = filter.test(path);
-		if (!result) {
-			return true;
 		}
 	}
 	return false;

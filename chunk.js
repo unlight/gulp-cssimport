@@ -1,14 +1,17 @@
 function Chunk(data) {
-	if (data.vfile) this.vfile = data.vfile;
+	if (data.vinyl) {
+		this.vinyl = data.vinyl;
+		return;
+	}
 	if (data.directory) this.directory = data.directory;
 	if (data.contents) this.contents = data.contents;
-
-	Object.defineProperty(this, "isVinylFile", {
-		get: function () {
-			return Boolean(this.vfile);
-		}
-	});
 }
+
+Object.defineProperty(Chunk.prototype, "isVinyl", {
+	get: function () {
+		return Boolean(this.vinyl);
+	}
+});
 
 Chunk.create = function (data, options) {
 	options = options || {};
@@ -18,7 +21,7 @@ Chunk.create = function (data, options) {
 	}
 	if (data.isBuffer && data.isBuffer()) {
 		result = new Chunk({
-			vfile: data
+			vinyl: data
 		});
 	} else if (data instanceof Buffer) {
 		result = new Chunk({
@@ -34,13 +37,13 @@ Chunk.create = function (data, options) {
 		throw "Passed unknown object.";
 	}
 	// Add additional properties.
-	if (result.getDirectory() == null && options.directory) result.directory = options.directory;
+	if (options.directory && result.getDirectory() == null) result.directory = options.directory;
 	return result;
 };
 
 Chunk.prototype.getDirectory = function () {
-	if (this.vfile) {
-		return this.vfile.base;
+	if (this.vinyl) {
+		return this.vinyl.base;
 	}
 	return this.directory;
 };
@@ -49,8 +52,8 @@ Chunk.prototype.getContents = function () {
 	if (this.contents) {
 		return this.contents;
 	}
-	if (this.vfile) {
-		return this.vfile.contents.toString();
+	if (this.vinyl) {
+		return this.vinyl.contents.toString();
 	}
 	throw "Uknown type.";
 };
