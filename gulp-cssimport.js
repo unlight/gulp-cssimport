@@ -1,9 +1,10 @@
 /// <reference path="typings/node/node.d.ts" />
 "use strict";
+var gutil = require("gulp-util");
 var through = require("through2");
 var format = require("util").format;
 var path = require("path");
-var merge = require("deepmerge");
+var deepExtend = require('deep-extend');
 var isIgnored = require("./helper").isIgnored;
 var resolvePath = require("./helper").resolvePath;
 var trim = require("./helper").trim;
@@ -12,14 +13,19 @@ var Chunk = require("./chunk");
 
 var defaults = {
 	extensions: null,
-	filter: null,
-	directory: process.cwd()
+	filter: null
 };
+Object.defineProperty(defaults, "directory", {
+	enumerable: true,
+	get: function() {
+		return process.cwd();
+	}
+});
 
 module.exports = function cssImport(options) {
 
-	options = merge(defaults, options || {});
-
+	options = deepExtend({}, defaults, options || {});
+	
 	if (options.extensions && !Array.isArray(options.extensions)) {
 		options.extensions = options.extensions.toString().split(",").map(function (x) {
 			return x.trim();
@@ -97,15 +103,14 @@ module.exports = function cssImport(options) {
 				fileContents(nextChunk, null, callback);
 				return;
 			}
-			// todo: pass vinyl file 
-			// if (isVinylFile) {
-			// 	contents = new gutil.File({
-			// 		cwd: data.cwd,
-			// 		base: data.base,
-			// 		path: data.path,
-			// 		contents: new Buffer(contents)
-			// 	});
-			// }
+			if (chunk.isVinylFile) {
+				contents = new gutil.File({
+					cwd: data.cwd,
+					base: data.base,
+					path: data.path,
+					contents: new Buffer(contents)
+				});
+			}
 			callback(null, contents);
 		}
 

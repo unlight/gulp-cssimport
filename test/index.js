@@ -16,8 +16,8 @@ emitter.on("run", function(index) {
 	if (!name) {
 		throw new Error("Index out of range.");
 	}
-	var fn = require("./" + name);
 	process.chdir(__dirname + "/" + name);
+	var fn = require("./" + name);
 	var t = test(fn);
 	t.on("end", function() {
 		var nextIndex = index + 1;

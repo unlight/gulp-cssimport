@@ -58,9 +58,8 @@ function isIgnored(path, options) {
 exports.isIgnored = isIgnored;
 
 exports.resolvePath = function (po, callback) {
-	var filePath = po.path;
 	if (po.isUrl()) {
-		var req = hh.request(filePath, function (res) {
+		var req = hh.request(po.path, function (res) {
 			collect(res, function (err, data) {
 				var content = data.toString();
 				callback(err, content, po);
@@ -70,6 +69,7 @@ exports.resolvePath = function (po, callback) {
 		return;
 	}
 
+	var filePath;
 	filePath = path.join(po.directory, po.path);
 	filePath = path.normalize(filePath);
 

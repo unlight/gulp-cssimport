@@ -3,6 +3,12 @@ function Chunk(data) {
 	if (data.path) this.path = data.path;
 	if (data.directory) this.directory = data.directory;
 	if (data.contents) this.contents = data.contents;
+
+	Object.defineProperty(this, "isVinylFile", {
+		get: function () {
+			return Boolean(this.vfile);
+		}
+	});
 }
 
 Chunk.create = function (data, options) {
@@ -34,6 +40,9 @@ Chunk.create = function (data, options) {
 };
 
 Chunk.prototype.getDirectory = function () {
+	if (this.vfile) {
+		return this.vfile.base;
+	}
 	return this.directory;
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "gulp-cssimport",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "collect-stream": "^1.0.0",
+    "deep-extend": "^0.4.0",
     "deepmerge": "^0.2.10",
     "gulp-util": "2.2.X",
     "http-https": "^1.0.0",

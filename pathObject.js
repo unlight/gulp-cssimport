@@ -14,7 +14,6 @@ PathObject.prototype.isUrl = function () {
 
 PathObject.prototype.getPathDirectory = function () {
 	var file = path.join(this.directory, this.path);
-	//var result = path.normalize(file);
 	var result = path.dirname(file);
 	return result;
 };

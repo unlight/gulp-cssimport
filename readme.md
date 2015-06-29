@@ -84,6 +84,7 @@ CHANGELOG
 - added option 'extensions'
 - added option 'filter'
 
-1.4 [27 Jun 2015]
+2.0 [28 Jun 2015]
 - changed parse algorithm
 - can handle recursive import
+- added option 'directory'
