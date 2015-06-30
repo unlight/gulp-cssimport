@@ -1,13 +1,14 @@
+/// <reference path="typings/node/node.d.ts"/>
 var gulp = require("gulp");
 var gutil = require("gulp-util");
-var plugins = require("gulp-load-plugins")();
+var g = require("gulp-load-plugins")();
 
 gulp.task("watch-eslint", ["eslint"], function() {
 	gulp.watch(["./gulp-cssimport.js"], ["eslint"]);
 });
 
 gulp.task("eslint", function() {
-	var eslint = plugins.eslint;
+	var eslint = g.eslint;
 	var conf = {
 		rules: {
 			"no-use-before-define": [0, "nofunc"],
@@ -37,7 +38,17 @@ gulp.task("bump", function() {
 	if (argv.version) options.version = argv.version;
 	gulp.task("bump", function() {
 		gulp.src("./package.json")
-			.pipe(plugins.bump(options))
+			.pipe(g.bump(options))
 			.pipe(gulp.dest("./"));
 	});
+});
+
+
+gulp.task("test", function() {
+	process.chdir("./test");
+	require("./test/options-extensions.js");
+	require("./test/options-extensions2.js");
+	require("./test/options-filter.js");
+	require("./test/fixture4.js");
+	require("./test/fixture5.js");
 });

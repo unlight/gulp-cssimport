@@ -1,0 +1,6 @@
+@import url("./a.css");
+@import url("b.css");
+@import "http://fonts.googleapis.com/css?family=Tangerine";
+body {
+	font-size: 13px;
+}

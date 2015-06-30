@@ -1,0 +1,18 @@
+/* a.css */
+/* b.css */
+/* b1.css */
+/* b2.css */
+a {color: white }
+
+strong {font-weight: bold}
+
+@font-face {
+  font-family: 'Tangerine';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Tangerine'), url(http://fonts.gstatic.com/s/tangerine/v6/HGfsyCL5WASpHOFnouG-RKCWcynf_cDxXwCLxiixG1c.ttf) format('truetype');
+}
+
+body {
+	font-size: 13px;
+}

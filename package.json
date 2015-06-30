@@ -1,37 +1,36 @@
 {
   "name": "gulp-cssimport",
-  "version": "1.3.1",
-  "description": "Parses css files, finds `@import` directive and includes these files.",
+  "version": "2.0.0",
+  "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
-    "test": "cd test && tape *.js | tap-spec && rm -rf tmp"
+    "test": "cd test && node index.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/unlight/gulp-cssimport.git"
   },
   "keywords": [
-    "gulpplugin",
     "css",
+    "gulpplugin",
     "import"
   ],
   "dependencies": {
+    "collect-stream": "^1.0.0",
+    "deep-extend": "^0.4.0",
     "gulp-util": "2.2.X",
-    "through2": "0.4.X",
-    "useful-functions.js": "1.0.X"
+    "http-https": "^1.0.0",
+    "phpjs": "^1.3.2",
+    "minimatch": "^2.0.8",
+    "through2": "0.4.X"
   },
   "devDependencies": {
-    "gulp": "3.8.X",
+    "gulp": "^3.9.0",
     "gulp-bump": "0.1.X",
     "gulp-eslint": "0.1.X",
     "gulp-load-plugins": "0.7.X",
     "minimist": "1.1.X",
-    "tap-spec": "1.0.X",
-    "tape": "3.0.X"
-  },
-  "author": {
-    "name": "S",
-    "url": "http://rv-home.ru"
+    "tape": "^4.0.0"
   },
   "license": "X.Net"
 }
