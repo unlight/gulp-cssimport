@@ -17,9 +17,9 @@ gulp.task("import", function() {
 
 OPTIONS
 -------
-#### filter  
+#### filter
+RegExp, default: null (no filter).  
 Process only files which match to regexp.
-RegExp, default: null (no filter).
 Any other non-matched lines will be leaved as is.  
 Example:
 ```js
@@ -75,6 +75,9 @@ If you will do `gulp.src("*.css")` gulp will read `a.css` and `b.css`,
 and plugin also will try to read these files. It is double job.  
 Do instead: `gulp.src("main.css")`
 
+** Use filter option: **
+If you need exclude files from import, try use `filter` only option (it is faster) and avoid others.
+
 SIMILAR PROJECTS
 ----------------
 https://npmjs.org/package/gulp-coimport/  
@@ -106,7 +109,8 @@ CHANGELOG
 - added option 'extensions'
 - added option 'filter'
 
-2.0 [28 Jun 2015]
+2.0 [30 Jun 2015]
 - changed parse algorithm
 - can handle recursive import
+- can handle minified css files
 - added option 'matchPattern'
