@@ -14,7 +14,8 @@ var Chunk = require("./chunk");
 var defaults = {
 	extensions: null,
 	filter: null,
-	matchPattern: null
+	matchPattern: null,
+	limit: 5000
 };
 Object.defineProperty(defaults, "directory", {
 	enumerable: true,
@@ -32,8 +33,14 @@ module.exports = function cssImport(options) {
 			return x.trim();
 		});
 	}
-
+	
+	var stream;
+	var cssCount = 0;
+	
 	function fileContents(data, encoding, callback) {
+		if (!stream) {
+			stream = this;
+		}
 		var chunk = Chunk.create(data, { directory: options.directory });
 		//console.log("chunk.isVinyl", chunk.isVinyl);
 		// https://github.com/kevva/import-regex/
@@ -61,6 +68,11 @@ module.exports = function cssImport(options) {
 			fileArray[index] = format("importing file %j", pathObject);
 			lastPos = importRe.lastIndex;
 			// Start resolving.
+			// console.log("Start resolving", cssCount++, pathObject);
+			if (++cssCount > options.limit) {
+				stream.emit("error", new Error("Exceed limit. Recursive include?"));
+				return;
+			}
 			count++;
 			resolvePath(pathObject, onResolvePath);
 		}
@@ -98,13 +110,12 @@ module.exports = function cssImport(options) {
 			if (fileArray.length > 0) {
 				contents = fileArray.join("");
 			}
-			// todo: 1. options for max recursive
 			if (!state.done) {
 				//console.log("chunk.isVinyl", chunk.isVinyl);
 				var nextChunk;
 				if (chunk.isVinyl) {
 					chunk.vinyl.contents = new Buffer(contents);
-					chunk.vinyl.base = state.directory; 
+					chunk.vinyl.base = state.directory;
 					nextChunk = chunk.vinyl;
 				} else {
 					nextChunk = Chunk.create({

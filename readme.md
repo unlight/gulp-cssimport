@@ -45,6 +45,10 @@ Urls are matched by default. If you do not want include them, use `filter` optio
 #### matchOptions
 Object, [minimatch](https://www.npmjs.com/package/minimatch) options for `matchPattern`.
 
+#### limit
+Number, default 5000.  
+Defence from infinite recursive import.
+
 #### extensions  
 Deprecated, use `matchPattern` instead.  
 String or Array, default: null (process all).
