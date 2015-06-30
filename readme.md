@@ -2,6 +2,12 @@ gulp-cssimport
 ==============
 Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.
 
+INSTALL
+-------
+```sh
+npm install gulp-cssimport
+```
+
 USAGE
 -----
 ```js
