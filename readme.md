@@ -65,7 +65,7 @@ It doesn't matter if you are using gulp.
 
 TIPS AND TRICKS
 ---------------
-** Be more precise and do not add to src importing file without necessary: **  
+**Be more precise and do not add to src importing file without necessary:**  
 ```css
 // main.css
 @import "a.css";
@@ -75,7 +75,7 @@ If you will do `gulp.src("*.css")` gulp will read `a.css` and `b.css`,
 and plugin also will try to read these files. It is double job.  
 Do instead: `gulp.src("main.css")`
 
-** Use filter option: **
+**Use filter option:**  
 If you need exclude files from import, try use `filter` only option (it is faster) and avoid others.
 
 SIMILAR PROJECTS
