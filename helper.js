@@ -1,9 +1,11 @@
+"use strict";
 var fs = require("fs");
 var gutil = require("gulp-util");
 var collect = require("collect-stream");
 var hh = require("http-https");
 var fs = require("fs");
 var path = require("path");
+var minimatch = require("minimatch");
 var PLUGIN_NAME = "gulp-cssimport";
 
 function getExtension(p) {
@@ -13,31 +15,43 @@ function getExtension(p) {
 
 exports.getExtension = getExtension;
 
-exports.trim = require("phpjs/build/npm").trim;
+exports.trim = (function () {
+	var vm = require("vm");
+	var _phpFunctions = {};
+	var bodypath = require.resolve("phpjs/functions/strings/trim.js");
+	var body = fs.readFileSync(bodypath, { encoding: "utf8" });
+	vm.runInNewContext(body, _phpFunctions);
+	var fn = _phpFunctions["trim"];
+	return fn;
+} ());
 
 function isUrl(s) {
-	var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+	var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 	return regexp.test(s);
 };
 
 exports.isUrl = isUrl;
 
-function isIgnored(path, options) {
+function isMatch(path, options) {
 	if (!options) {
-		return false;
-	}
-	if (!path) {
 		return true;
 	}
-	var filter = (options || {}).filter;
-	if (filter instanceof RegExp) {
-		var result = filter.test(path);
-		if (!result) {
-			return true;
-		}
+	if (!path) {
+		return false;
 	}
-	var extensions = (options || {}).extensions;
-	if (extensions) {
+	options = options || {};
+	var result;
+	if (options.filter instanceof RegExp) {
+		var filter = options.filter;
+		filter.lastIndex = 0;
+		result = filter.test(path);
+	}
+	if (options.matchPattern && !isUrl(path)) {
+		var matchPattern = options.matchPattern;
+		result = minimatch(path, matchPattern, options.matchOptions);
+	}
+	if (options.extensions) {
+		var extensions = options.extensions;
 		var fileExt = getExtension(path);
 		for (var k = 0; k < extensions.length; k++) {
 			var extension = extensions[k];
@@ -46,16 +60,19 @@ function isIgnored(path, options) {
 				extension = extension.slice(1);
 			}
 			if (isInverse && fileExt === extension) { // !sass , sass === css
-				return true;
+				return false;
 			} else if (!isInverse && fileExt !== extension) {
-				return true;
+				return false;
 			}
 		}
 	}
-	return false;
+	if (typeof result === "undefined") {
+		result = true;
+	}
+	return result;
 };
 
-exports.isIgnored = isIgnored;
+exports.isMatch = isMatch;
 
 exports.resolvePath = function (po, callback) {
 	if (po.isUrl()) {

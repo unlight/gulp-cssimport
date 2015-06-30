@@ -9,7 +9,7 @@ var gulp = require("gulp");
 var cssimport = require("gulp-cssimport");
 var options = {};
 gulp.task("import", function() {
-	gulp.src("src/*.css")
+	gulp.src("src/style.css")
 		.pipe(cssimport(options))
 		.pipe(gulp.dest("dist/"));
 }); 
@@ -17,7 +17,36 @@ gulp.task("import", function() {
 
 OPTIONS
 -------
-**extensions**  
+#### filter  
+Process only files which match to regexp.
+RegExp, default: null (no filter).
+Any other non-matched lines will be leaved as is.  
+Example:
+```js
+var options = {
+	filter: /^http:\/\//gi // process only http urls
+};
+```
+
+#### matchPattern  
+String, glob pattern string. See [minimatch](https://www.npmjs.com/package/minimatch) for more details.
+```js
+var options = {
+	matchPattern: "*.css" // process only css
+};
+var options2 = {
+	matchPattern: "!*.{less,sass}" // all except less and sass
+};
+```
+**Note:**
+`matchPattern` will not be applied to urls (remote files, e.g. `http://fonts.googleapis.com/css?family=Tangerine`), only files.  
+Urls are matched by default. If you do not want include them, use `filter` option (it is applicable to all).
+
+#### matchOptions
+Object, [minimatch](https://www.npmjs.com/package/minimatch) options for `matchPattern`.
+
+#### extensions  
+Deprecated, use `matchPattern` instead.  
 String or Array, default: null (process all).
 Case insensitive list of extension allowed to process.
 Any other non-matched lines will be leaved as is.  
@@ -30,16 +59,9 @@ var options = {
 	extensions: ["!less", "!sass"] // all except less and sass
 };
 ```
-**filter**  
-Process only files which match to regexp.
-RegExp, default: null (no filter).
-Any other non-matched lines will be leaved as is.  
-Example:
-```js
-var options = {
-	filter: /^http:\/\//gi // process only http urls
-};
-```
+
+#### directory
+It doesn't matter if you are using gulp.
 
 TIPS AND TRICKS
 ---------------
@@ -87,4 +109,4 @@ CHANGELOG
 2.0 [28 Jun 2015]
 - changed parse algorithm
 - can handle recursive import
-- added option 'directory'
+- added option 'matchPattern'

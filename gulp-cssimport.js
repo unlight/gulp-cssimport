@@ -5,7 +5,7 @@ var through = require("through2");
 var format = require("util").format;
 var path = require("path");
 var deepExtend = require('deep-extend');
-var isIgnored = require("./helper").isIgnored;
+var isMatch = require("./helper").isMatch;
 var resolvePath = require("./helper").resolvePath;
 var trim = require("./helper").trim;
 var PathObject = require("./pathObject");
@@ -13,7 +13,8 @@ var Chunk = require("./chunk");
 
 var defaults = {
 	extensions: null,
-	filter: null
+	filter: null,
+	matchPattern: null
 };
 Object.defineProperty(defaults, "directory", {
 	enumerable: true,
@@ -46,7 +47,8 @@ module.exports = function cssImport(options) {
 		while ((match = importRe.exec(contents)) !== null) {
 			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
 			var filePath = trim(match2[1], "'\"");
-			if (isIgnored(filePath, options)) {
+			//console.log(filePath, isMatch(filePath, options));
+			if (!isMatch(filePath, options)) {
 				continue;
 			}
 			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
@@ -91,11 +93,12 @@ module.exports = function cssImport(options) {
 
 		// todo: optimize do not scan all contents.
 		function fileReady(state) {
+			//console.log("fileReady.state", state);
 			state = state || {};
 			if (fileArray.length > 0) {
 				contents = fileArray.join("");
 			}
-			// todo: options for max recursive
+			// todo: 1. options for max recursive
 			if (!state.done) {
 				//console.log("chunk.isVinyl", chunk.isVinyl);
 				var nextChunk;
