@@ -11,7 +11,8 @@ var tests = [
 	"options-filter",
 	"complete",
 	"gulp-recursive",
-	"gulp-complete"
+	"gulp-complete",
+	"gulp-parent"
 ];
 emitter.on("run", function(index) {
 	var name = tests[index];
