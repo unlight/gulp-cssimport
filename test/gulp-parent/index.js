@@ -6,7 +6,7 @@ var collect = require("collect-stream");
 var plugin = require("../..");
 var gulp = require("gulp");
 
-var options = {};
+var options = { matchPattern: '*.css' };
 
 test("Gulp parent", function (t) {
 	var stream;

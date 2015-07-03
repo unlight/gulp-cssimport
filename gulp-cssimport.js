@@ -15,6 +15,9 @@ var defaults = {
 	extensions: null,
 	filter: null,
 	matchPattern: null,
+	matchOptions: {
+		matchBase: true
+	},
 	limit: 5000
 };
 Object.defineProperty(defaults, "directory", {
