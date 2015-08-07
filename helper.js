@@ -6,6 +6,7 @@ var hh = require("http-https");
 var fs = require("fs");
 var path = require("path");
 var minimatch = require("minimatch");
+var phpfn = require("phpfn");
 var PLUGIN_NAME = "gulp-cssimport";
 
 function getExtension(p) {
@@ -15,15 +16,7 @@ function getExtension(p) {
 
 exports.getExtension = getExtension;
 
-exports.trim = (function () {
-	var vm = require("vm");
-	var _phpFunctions = {};
-	var bodypath = require.resolve("phpjs/functions/strings/trim.js");
-	var body = fs.readFileSync(bodypath, { encoding: "utf8" });
-	vm.runInNewContext(body, _phpFunctions);
-	var fn = _phpFunctions["trim"];
-	return fn;
-} ());
+exports.trim = phpfn("trim");
 
 function isUrl(s) {
 	var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
