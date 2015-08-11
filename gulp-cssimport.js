@@ -14,9 +14,9 @@ var Chunk = require("./chunk");
 var defaults = {
 	extensions: null,
 	filter: null,
-	matchPattern: null,
+	matchPattern: "*",
 	matchOptions: {
-		matchBase: true
+		matchBase: false
 	},
 	limit: 5000
 };
@@ -36,10 +36,10 @@ module.exports = function cssImport(options) {
 			return x.trim();
 		});
 	}
-	
+
 	var stream;
 	var cssCount = 0;
-	
+
 	function fileContents(data, encoding, callback) {
 		if (!stream) {
 			stream = this;
