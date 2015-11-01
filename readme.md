@@ -88,6 +88,14 @@ Do instead: `gulp.src("main.css")`
 **Use filter option:**  
 If you need exclude files from import, try use `filter` only option (it is faster) and avoid others.
 
+
+POSTCSS
+-------
+There are plugins for [PostCSS](https://github.com/postcss/postcss) which do same job or even better:
+* [postcss-import](https://github.com/postcss/postcss-import) inlines the stylesheets referred to by `@import` rules
+* [postcss-import-url](https://github.com/unlight/gulp-cssimport) inlines remote files.
+
+
 SIMILAR PROJECTS
 ----------------
 https://npmjs.org/package/gulp-coimport/  
