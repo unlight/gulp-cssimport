@@ -93,7 +93,7 @@ POSTCSS
 -------
 There are plugins for [PostCSS](https://github.com/postcss/postcss) which do same job or even better:
 * [postcss-import](https://github.com/postcss/postcss-import) inlines the stylesheets referred to by `@import` rules
-* [postcss-import-url](https://github.com/unlight/gulp-cssimport) inlines remote files.
+* [postcss-import-url](https://github.com/unlight/postcss-import-url) inlines remote files.
 
 
 SIMILAR PROJECTS
