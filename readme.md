@@ -140,3 +140,4 @@ CHANGELOG
 - removed node streams support, now only gulp
 - removed directory option
 - added sourcemaps support
+- fixed bogus destination bugs

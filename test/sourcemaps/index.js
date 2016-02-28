@@ -14,7 +14,7 @@ test("Sourcemaps", function (t) {
 		.pipe(sourcemaps.init())
 		.pipe(plugin(options))
 		.pipe(sourcemaps.write())
-		.pipe(gulp.dest("./~dst"))
+		// .pipe(gulp.dest("./~dst"))
 	collect(stream, function (err, vinyls) {
 		data = vinyls[0].contents.toString();
 		t.notEqual(data.indexOf('# sourceMappingURL'), -1);
