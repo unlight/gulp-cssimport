@@ -112,7 +112,6 @@ KNOWN ISSUES
 TODO
 ----
 - Cache
-- Fix sourcemaps https://github.com/unlight/gulp-cssimport/issues/16
 
 CHANGELOG
 ---------
@@ -141,3 +140,5 @@ CHANGELOG
 - removed directory option
 - added sourcemaps support
 - fixed bogus destination bugs
+
+I have rewritten part with
