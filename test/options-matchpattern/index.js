@@ -8,15 +8,14 @@ var options = {
     matchPattern: '*.css',
 };
 
-test("Gulp parent", function(t) {
+test("Parent", function(t) {
     var stream;
     t.plan(1);
     var result = fs.readFileSync("result.css", {
         encoding: "utf8"
     });
     stream = gulp.src("design/style/css/main/style.css")
-        .pipe(plugin(options))
-        .pipe(gulp.dest("/dev/null"));
+        .pipe(plugin(options));
     collect(stream, function(err, data) {
         var file = data[0];
         data = file.contents.toString();

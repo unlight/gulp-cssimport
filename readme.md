@@ -79,7 +79,7 @@ TIPS AND TRICKS
 @import "b.css";
 ```
 If you will do `gulp.src("*.css")` gulp will read `a.css` and `b.css`,
-and plugin also will try to read these files. It is double job.  
+and plugin also will try to read these files. It is extra job.  
 Do instead: `gulp.src("main.css")`
 
 **Use filter option:**  
@@ -137,5 +137,6 @@ CHANGELOG
 - added option 'matchPattern'
 
 3.0 [28 Feb 2016]
-- Removed node streams support, now only gulp
-- Removed directory option
+- removed node streams support, now only gulp
+- removed directory option
+- added sourcemaps support

@@ -7,11 +7,10 @@ var gulp = require("gulp");
 var options = {
 };
 
-test("Gulp complete", {timeout: 5000}, function (t) {
+test("Complete", {timeout: 5000}, function (t) {
 	var result = fs.readFileSync("result.css", { encoding: "utf8" });
 	var stream = gulp.src("design/style.css")
-		.pipe(plugin(options))
-		.pipe(gulp.dest("/dev/null"));
+		.pipe(plugin(options));
 	collect(stream, function (err, data) {
 		var file = data[0];
 		data = file.contents.toString();
