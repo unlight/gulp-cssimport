@@ -1,5 +1,3 @@
-/// <reference path="../../typings/node/node.d.ts" />
-/// <reference path="../../typings/tape/tape.d.ts" />
 var test = require("tape");
 var fs = require("fs");
 var collect = require("collect-stream");

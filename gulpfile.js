@@ -30,7 +30,7 @@ gulp.task("eslint", function() {
 });
 
 gulp.task("bump", function() {
-	var argv = require("minimist")(process.argv.slice(2));
+	var argv = gutil.env;
 	var options = {
 		type: "patch"
 	};
@@ -41,14 +41,4 @@ gulp.task("bump", function() {
 			.pipe(g.bump(options))
 			.pipe(gulp.dest("./"));
 	});
-});
-
-
-gulp.task("test", function() {
-	process.chdir("./test");
-	require("./test/options-extensions.js");
-	require("./test/options-extensions2.js");
-	require("./test/options-filter.js");
-	require("./test/fixture4.js");
-	require("./test/fixture5.js");
 });

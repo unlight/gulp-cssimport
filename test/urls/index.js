@@ -1,18 +1,16 @@
-/// <reference path="../../typings/node/node.d.ts" />
-/// <reference path="../../typings/tape/tape.d.ts" />
 var test = require("tape");
 var fs = require("fs");
 var collect = require("collect-stream");
 var plugin = require("../..");
+var gulp = require("gulp");
 
 test("Urls", function(t) {
-	var stream = fs.createReadStream("style.css", {
-			encoding: "utf8"
-		})
+	var stream = gulp.src("style.css")
 		.pipe(plugin());
-	collect(stream, function(err, data) {
-		var pos = data.indexOf("font-family: 'Tangerine'");
-		t.notEqual(pos, -1);
+	collect(stream, function(err, vinyls) {
+		var data = vinyls[0].contents.toString();
+		t.notEqual(data.indexOf("font-family: 'Tangerine'"), -1);
+		t.notEqual(data.indexOf("fonts.gstatic.com"), -1);
 		t.end();
 	});
 });

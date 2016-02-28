@@ -1,15 +1,19 @@
-/// <reference path="typings/node/node.d.ts" />
 "use strict";
-var gutil = require("gulp-util");
 var through = require("through2");
-var format = require("util").format;
 var path = require("path");
-var deepExtend = require('deep-extend');
-var isMatch = require("./helper").isMatch;
-var resolvePath = require("./helper").resolvePath;
-var trim = require("./helper").trim;
-var PathObject = require("./pathObject");
-var Chunk = require("./chunk");
+var deepExtend = require("deep-extend");
+var fs = require("fs");
+var pify = require("pify");
+var gutil = require("gulp-util");
+var collect = require("collect-stream");
+var hh = require("http-https");
+var minimatch = require("minimatch");
+var phpfn = require("phpfn");
+
+var PLUGIN_NAME = "gulp-cssimport";
+var readFile = pify(fs.readFile);
+var trim = phpfn("trim");
+var format = require("util").format;
 
 var defaults = {
 	extensions: null,
@@ -20,12 +24,6 @@ var defaults = {
 	},
 	limit: 5000
 };
-Object.defineProperty(defaults, "directory", {
-	enumerable: true,
-	get: function () {
-		return process.cwd();
-	}
-});
 
 module.exports = function cssImport(options) {
 
@@ -40,109 +38,141 @@ module.exports = function cssImport(options) {
 	var stream;
 	var cssCount = 0;
 	
-	function fileContents(data, encoding, callback) {
+	function fileContents(vinyl, encoding, callback) {
+		// console.log('fileContents ' , vinyl.path);
+
 		if (!stream) {
 			stream = this;
 		}
-		var chunk = Chunk.create(data, { directory: options.directory });
-		//console.log("chunk.isVinyl", chunk.isVinyl);
 		// https://github.com/kevva/import-regex/
-		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)';
+		var regex = '(?:@import)(?:\\s)(?:url)?(?:(?:(?:\\()(["\'])?(?:[^"\')]+)\\1(?:\\))|(["\'])(?:.+)\\2)(?:[A-Z\\s])*)+(?:;)'; // eslint-disable-line
 		var importRe = new RegExp(regex, "gi");
 		var match;
-		var fileArray = [];
-		var lastPos = 0;
-		var count = 0;
-		var contents = chunk.getContents();
+		var file = [];
+		var lastpos = 0;
+		var promises = [];
+		var contents = vinyl.contents.toString();
 		while ((match = importRe.exec(contents)) !== null) {
 			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
-			var filePath = trim(match2[1], "'\"");
-			//console.log(filePath, isMatch(filePath, options));
-			if (!isMatch(filePath, options)) {
+			var importPath = trim(match2[1], "'\"");
+			if (!isMatch(importPath, options)) {
 				continue;
 			}
-			fileArray[fileArray.length] = contents.slice(lastPos, match.index);
-			var index = fileArray.length;
-			var pathObject = new PathObject({
-				index: index,
-				path: filePath,
-				directory: chunk.getDirectory()
-			});
-			fileArray[index] = format("importing file %j", pathObject);
-			lastPos = importRe.lastIndex;
+			file[file.length] = contents.slice(lastpos, match.index);
+			var index = file.length;
+			file[index] = format("importing file %s from %s", importPath, vinyl.relative);
+			lastpos = importRe.lastIndex;
 			// Start resolving.
-			// console.log("Start resolving", cssCount++, pathObject);
 			if (++cssCount > options.limit) {
 				stream.emit("error", new Error("Exceed limit. Recursive include?"));
 				return;
 			}
-			count++;
-			resolvePath(pathObject, onResolvePath);
-		}
 
-		function onResolvePath(err, data, pathObject) {
-			if (err) {
-				console.trace(err);
-				throw err;
-				// todo: Make it more realiable.
-				// callback(err);
-				// return;
-			}
-			fileArray[pathObject.index] = data;
-			count--;
-			if (count === 0) {
-				var state = { directory: pathObject.directory };
-				if (!pathObject.isUrl()) {
-					state.directory = pathObject.getPathDirectory();
+			(function(index) {
+				if (!isUrl(importPath)) {
+					var importFile = path.resolve(path.dirname(vinyl.path), importPath);
+					// console.log('importFile %s from %s' , importFile, vinyl.path);
+					promises.push(readFile(importFile, "utf8").then(function(data) {
+						return {index: index, importFile: importFile, data: data};
+					}));
+				} else {
+					promises[promises.length] = new Promise(function(resolve, reject) {
+						var req = hh.request(importPath, function (res) {
+							collect(res, function (err, data) {
+								if (err) return reject(err);
+								resolve({index: index, data: data.toString()});
+							});
+						});
+						req.on("error", reject);
+						req.end();
+					});
 				}
-				fileReady(state);
-			}
+			})(index);
 		}
-		// No import statements.
-		if (count === 0) {
-			fileReady({ done: true });
+		// Nothing to import.
+		if (promises.length === 0) {
+			callback(null, vinyl);
 			return;
 		}
 		// Adding trailing piece.
-		fileArray[fileArray.length] = contents.slice(lastPos);
-
-		// todo: optimize do not scan all contents.
-		function fileReady(state) {
-			//console.log("fileReady.state", state);
-			state = state || {};
-			if (fileArray.length > 0) {
-				contents = fileArray.join("");
-			}
-			if (!state.done) {
-				//console.log("chunk.isVinyl", chunk.isVinyl);
-				var nextChunk;
-				if (chunk.isVinyl) {
-					chunk.vinyl.contents = new Buffer(contents);
-					chunk.vinyl.base = state.directory;
-					nextChunk = chunk.vinyl;
-				} else {
-					nextChunk = Chunk.create({
-						contents: contents,
-						directory: state.directory
-					});
-				}
-				//console.log("state", state);
-				fileContents(nextChunk, null, callback);
-				return;
-			}
-			//console.log("chunk.isVinyl", chunk.isVinyl);
-			if (chunk.isVinyl) {
-				contents = new gutil.File({
-					cwd: data.cwd,
-					base: data.base,
-					path: data.path,
-					contents: new Buffer(contents)
+		file[file.length] = contents.slice(lastpos);
+		// Waiting promises.
+		Promise.all(promises).then(function(results) {
+			for (var i = 0; i < results.length; i++) {
+				var item = results[i];
+				// file[item.index] = item.data;
+				var vfile = new gutil.File({
+					path: item.importFile,
+					contents: new Buffer(item.data)
 				});
+				(function(item) {
+					results[i] = pify(fileContents)(vfile, null).then(function(vfile) {
+						return {index: item.index, data: vfile.contents.toString()};
+					});
+				})(item);
 			}
-			callback(null, contents);
-		}
-
+			return Promise.all(results);
+		})
+		.then(function(results) {
+			for (var i = 0; i < results.length; i++) {
+				var index = results[i].index;
+				file[index] = results[i].data;
+			}
+			vinyl.contents = new Buffer(file.join(""));
+			callback(null, vinyl);
+		})
+		.catch(callback);
 	}
 
 	return through.obj(fileContents);
 };
+
+function isMatch(path, options) {
+	if (!options) {
+		return true;
+	}
+	if (!path) {
+		return false;
+	}
+	options = options || {};
+	var result;
+	if (options.filter instanceof RegExp) {
+		var filter = options.filter;
+		filter.lastIndex = 0;
+		result = filter.test(path);
+	}
+	if (options.matchPattern && !isUrl(path)) {
+		var matchPattern = options.matchPattern;
+		result = minimatch(path, matchPattern, options.matchOptions);
+	}
+	if (options.extensions) {
+		var extensions = options.extensions;
+		var fileExt = getExtension(path);
+		for (var k = 0; k < extensions.length; k++) {
+			var extension = extensions[k];
+			var isInverse = extension.charAt(0) === "!";
+			if (isInverse) {
+				extension = extension.slice(1);
+			}
+			if (isInverse && fileExt === extension) { // !sass , sass === css
+				return false;
+			} else if (!isInverse && fileExt !== extension) {
+				return false;
+			}
+		}
+	}
+	if (typeof result === "undefined") {
+		result = true;
+	}
+	return result;
+}
+
+function isUrl(s) {
+	var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+	return regexp.test(s);
+}
+
+function getExtension(p) {
+	p = String(p);
+	return p.substr(p.lastIndexOf(".") + 1);
+}

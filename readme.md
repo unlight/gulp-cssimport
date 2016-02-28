@@ -70,9 +70,6 @@ var options = {
 };
 ```
 
-#### directory
-It doesn't matter if you are using gulp.
-
 TIPS AND TRICKS
 ---------------
 **Be more precise and do not add to src importing file without necessary:**  
@@ -112,6 +109,11 @@ KNOWN ISSUES
 ------------
 - Cannot resolve `@import 'foo.css' (min-width: 25em);`
 
+TODO
+----
+- Cache
+- Fix sourcemaps https://github.com/unlight/gulp-cssimport/issues/16
+
 CHANGELOG
 ---------
 1.0 [12 Feb 2014]
@@ -133,3 +135,7 @@ CHANGELOG
 - can handle recursive import
 - can handle minified css files
 - added option 'matchPattern'
+
+3.0 [28 Feb 2016]
+- Removed node streams support, now only gulp
+- Removed directory option

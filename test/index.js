@@ -2,17 +2,15 @@ var test = require("tape");
 var EventEmitter = require("events").EventEmitter;
 var emitter = new EventEmitter();
 var tests = [
+	"complete",
 	"general",
-	"urls",
 	"minified",
-	"recursive",
 	"options-extensions-exclude",
 	"options-extensions-only",
 	"options-filter",
-	"complete",
-	"gulp-recursive",
-	"gulp-complete",
-	"gulp-parent"
+	"options-matchpattern",
+	"parent",
+	"recursive"
 ];
 emitter.on("run", function(index) {
 	var name = tests[index];
