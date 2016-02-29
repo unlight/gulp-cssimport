@@ -140,5 +140,3 @@ CHANGELOG
 - removed directory option
 - added sourcemaps support
 - fixed bogus destination bugs
-
-I have rewritten part with

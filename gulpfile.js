@@ -1,4 +1,3 @@
-/// <reference path="typings/node/node.d.ts"/>
 var gulp = require("gulp");
 var gutil = require("gulp-util");
 var g = require("gulp-load-plugins")();

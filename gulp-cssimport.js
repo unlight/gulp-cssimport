@@ -123,8 +123,8 @@ module.exports = function cssImport(options) {
 				var bundle = new MagicString.Bundle();
 				iterator = function(file, result) {
 					bundle.addSource({
-					  	filename: result.importPath,
-					  	content: new MagicString(result.contents)
+						filename: result.importPath,
+						content: new MagicString(result.contents)
 					});
 				};
 			}
@@ -147,7 +147,6 @@ module.exports = function cssImport(options) {
 			callback(null, vinyl);
 		})
 		.catch(function(err) {
-			console.log('err ' , err);
 			callback(new gutil.PluginError(PLUGIN_NAME, err));
 		});
 	}
