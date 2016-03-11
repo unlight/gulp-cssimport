@@ -1,6 +1,6 @@
 {
   "name": "gulp-cssimport",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
@@ -18,23 +18,22 @@
   "dependencies": {
     "collect-stream": "^1.0.0",
     "deep-extend": "^0.4.0",
-    "gulp-util": "2.2.X",
+    "gulp-util": "*",
     "http-https": "^1.0.0",
     "magic-string": "^0.10.2",
-    "minimatch": "^2.0.8",
+    "minimatch": "^3.0.0",
     "phpfn": "^1.0.0",
     "pify": "^2.3.0",
-    "through2": "0.4.X",
+    "through2": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-bump": "0.1.X",
-    "gulp-eslint": "0.1.X",
-    "gulp-load-plugins": "0.7.X",
-    "gulp-sourcemaps": "^1.6.0",
-    "minimist": "1.1.X",
-    "tape": "^4.0.0"
+    "gulp": "3",
+    "gulp-bump": "*",
+    "gulp-eslint": "*",
+    "gulp-load-plugins": "*",
+    "gulp-sourcemaps": "*",
+    "tape": "*"
   },
-  "license": "X.Net"
+  "license": "Xnet"
 }
