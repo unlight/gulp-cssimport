@@ -8,13 +8,12 @@ var gutil = require("gulp-util");
 var collect = require("collect-stream");
 var hh = require("http-https");
 var minimatch = require("minimatch");
-var phpfn = require("phpfn");
 var applySourceMap = require("vinyl-sourcemaps-apply");
 var MagicString = require("magic-string");
 
 var PLUGIN_NAME = "gulp-cssimport";
 var readFile = pify(fs.readFile);
-var trim = phpfn("trim");
+var trim = require("lodash.trim");
 var format = require("util").format;
 
 var defaults = {

@@ -20,20 +20,20 @@
     "deep-extend": "^0.4.0",
     "gulp-util": "*",
     "http-https": "^1.0.0",
-    "magic-string": "^0.10.2",
-    "minimatch": "^3.0.0",
-    "phpfn": "^1.0.0",
+    "lodash.trim": "^4.4.0",
+    "magic-string": "0.15.2",
+    "minimatch": "3.0.2",
     "pify": "^2.3.0",
     "through2": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },
   "devDependencies": {
     "gulp": "3",
-    "gulp-bump": "*",
-    "gulp-eslint": "*",
-    "gulp-load-plugins": "*",
+    "gulp-bump": "2.2.0",
+    "gulp-eslint": "3.0.1",
+    "gulp-load-plugins": "1.2.4",
     "gulp-sourcemaps": "*",
-    "tape": "*"
+    "tape": "4.6.0"
   },
   "license": "Xnet"
 }
