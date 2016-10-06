@@ -23,8 +23,12 @@ gulp.task("import", function() {
 
 OPTIONS
 -------
+#### includePaths
+Array, default: `[]`  
+Additional paths to resolve imports.
+
 #### filter
-RegExp, default: null (no filter).  
+RegExp, default: `null` (no filter).  
 Process only files which match to regexp.
 Any other non-matched lines will be leaved as is.  
 Example:
@@ -52,12 +56,12 @@ Urls are matched by default. If you do not want include them, use `filter` optio
 Object, [minimatch](https://www.npmjs.com/package/minimatch) options for `matchPattern`.
 
 #### limit
-Number, default 5000.  
+Number, default `5000`.  
 Defence from infinite recursive import.
 
 #### extensions  
 Deprecated, use `matchPattern` instead.  
-String or Array, default: null (process all).
+String or Array, default: `null` (process all).
 Case insensitive list of extension allowed to process.
 Any other non-matched lines will be leaved as is.  
 Examples:
@@ -115,19 +119,14 @@ TODO
 
 CHANGELOG
 ---------
-1.0 [12 Feb 2014]
-- first release
+3.2 [6 Oct 2016]
+- added option 'includePaths'
 
-1.1 [15 Feb 2014]
-- switched to through2
-- process files asynchronously
-
-1.2 [15 Feb 2014]
-- fixed processing urls
-
-1.3 [14 Nov 2014]
-- added option 'extensions'
-- added option 'filter'
+3.0 [28 Feb 2016]
+- removed node streams support, now only gulp
+- removed directory option
+- added sourcemaps support
+- fixed bogus destination bugs
 
 2.0 [30 Jun 2015]
 - changed parse algorithm
@@ -135,8 +134,16 @@ CHANGELOG
 - can handle minified css files
 - added option 'matchPattern'
 
-3.0 [28 Feb 2016]
-- removed node streams support, now only gulp
-- removed directory option
-- added sourcemaps support
-- fixed bogus destination bugs
+1.3 [14 Nov 2014]
+- added option 'extensions'
+- added option 'filter'
+
+1.2 [15 Feb 2014]
+- fixed processing urls
+
+1.1 [15 Feb 2014]
+- switched to through2
+- process files asynchronously
+
+1.0 [12 Feb 2014]
+- first release

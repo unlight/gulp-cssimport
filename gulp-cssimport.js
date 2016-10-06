@@ -10,6 +10,7 @@ var hh = require("http-https");
 var minimatch = require("minimatch");
 var applySourceMap = require("vinyl-sourcemaps-apply");
 var MagicString = require("magic-string");
+var lookupPath = require("lookup-path");
 
 var PLUGIN_NAME = "gulp-cssimport";
 var readFile = pify(fs.readFile);
@@ -18,6 +19,7 @@ var format = require("util").format;
 
 var defaults = {
 	extensions: null,
+	includePaths: [],
 	filter: null,
 	matchPattern: null,
 	matchOptions: {
@@ -71,7 +73,8 @@ module.exports = function cssImport(options) {
 			(function(index) {
 				var result = {index: index, importPath: importPath};
 				if (!isUrl(importPath)) {
-					var importFile = path.resolve(path.dirname(vinyl.path), importPath);
+					var pathDirectory = path.dirname(vinyl.path);
+					var importFile = resolveImportFile(pathDirectory, importPath, options.includePaths);
 					promises.push(readFile(importFile, "utf8").then(function(contents) {
 						result.importFile = importFile;
 						result.contents = contents;
@@ -81,7 +84,9 @@ module.exports = function cssImport(options) {
 					promises[promises.length] = new Promise(function(resolve, reject) {
 						var req = hh.request(importPath, function (res) {
 							collect(res, function (err, data) {
-								if (err) return reject(err);
+								if (err) {
+									return reject(err);
+								}
 								result.contents = data.toString();
 								resolve(result);
 							});
@@ -152,6 +157,35 @@ module.exports = function cssImport(options) {
 
 	return through.obj(fileContents);
 };
+
+function resolveImportFile(pathDirectory, importPath, includePaths) {
+	var result = lookupPath(importPath, pathDirectory);
+	if (result) {
+		return result;
+	}
+	for (var i = 0; i < includePaths.length; i++) {
+		var includePath = includePaths[i];
+		
+		var d1 = path.resolve(pathDirectory, includePath);
+		if (d1 === pathDirectory) {
+			continue;
+		}
+		result = lookupPath(importPath, d1);
+		if (result) {
+			return result;
+		}
+
+		var d2 = path.resolve(includePath);
+		if (d2 === d1) {
+			continue;
+		}
+		result = lookupPath(importPath, d2);
+		if (result) {
+			return result;
+		}
+	}
+	return null;
+}
 
 function isMatch(path, options) {
 	if (!options) {
