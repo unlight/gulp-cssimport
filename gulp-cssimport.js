@@ -75,6 +75,10 @@ module.exports = function cssImport(options) {
 				if (!isUrl(importPath)) {
 					var pathDirectory = path.dirname(vinyl.path);
 					var importFile = resolveImportFile(pathDirectory, importPath, options.includePaths);
+					if (!importFile) {
+						var err = new Error(`Cannot find file '${importPath}' from '${pathDirectory}' (includePaths: ${options.includePaths})`);
+						callback(new gutil.PluginError(PLUGIN_NAME, err));
+					}
 					promises.push(readFile(importFile, "utf8").then(function(contents) {
 						result.importFile = importFile;
 						result.contents = contents;

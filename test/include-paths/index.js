@@ -21,3 +21,14 @@ test("Include paths", function (t) {
 		t.end();
 	});
 });
+
+test("Include paths error", function (t) {
+	var stream;
+	var p = plugin({});
+	stream = gulp.src("design/style.css")
+		.pipe(p);
+	collect(stream, function(err, data) {
+		t.ok(err.message.indexOf("Cannot find file 'c.css' from") === 0);
+		t.end();
+	});
+});

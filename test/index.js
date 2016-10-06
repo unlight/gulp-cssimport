@@ -10,6 +10,7 @@ var tests = [
 	"options-filter",
 	"options-matchpattern",
 	"parent",
+	"include-paths",
 	"recursive"
 ];
 emitter.on("run", function(index) {

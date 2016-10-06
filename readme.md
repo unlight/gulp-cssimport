@@ -119,7 +119,7 @@ TODO
 
 CHANGELOG
 ---------
-3.2 [6 Oct 2016]
+4.0 [6 Oct 2016]
 - added option 'includePaths'
 
 3.0 [28 Feb 2016]
