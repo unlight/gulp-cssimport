@@ -11,7 +11,10 @@ var tests = [
 	"options-matchpattern",
 	"parent",
 	"include-paths",
-	"recursive"
+	"recursive",
+	"commented-import",
+	"wild-commented-import",
+	"sass-commented-import",
 ];
 emitter.on("run", function(index) {
 	var name = tests[index];
