@@ -124,7 +124,7 @@ TODO
 
 CHANGELOG
 ---------
-5.0 [6 Oct 2016]
+5.0 [20 Nov 2016]
 - added option 'skipComments'
 
 4.0 [6 Oct 2016]
