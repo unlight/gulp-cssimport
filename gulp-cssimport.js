@@ -18,6 +18,7 @@ var trim = require("lodash.trim");
 var format = require("util").format;
 
 var defaults = {
+	skipComments: true,
 	extensions: null,
 	includePaths: [],
 	filter: null,
@@ -55,6 +56,21 @@ module.exports = function cssImport(options) {
 		var promises = [];
 		var contents = vinyl.contents.toString();
 		while ((match = importRe.exec(contents)) !== null) {
+			if (options.skipComments) {
+				var matchIndex = match.index;
+				// Check comment symbols 1.
+				var startCommentPosition = contents.lastIndexOf('/*', matchIndex);
+				var endCommentPosition = contents.lastIndexOf('*/', matchIndex);
+				if (!(endCommentPosition > startCommentPosition) && startCommentPosition !== -1) {
+					continue;
+				}
+				// Check comment symbols 2.
+				var startCommentPosition2 = contents.lastIndexOf('//', matchIndex);
+				var endCommentPosition2 = contents.lastIndexOf('\n', matchIndex);
+				if (startCommentPosition2 > endCommentPosition2 && startCommentPosition2 !== -1) {
+					continue;
+				}
+			}
 			var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
 			var importPath = trim(match2[1], "'\"");
 			if (!isMatch(importPath, options)) {
@@ -76,7 +92,7 @@ module.exports = function cssImport(options) {
 					var pathDirectory = path.dirname(vinyl.path);
 					var importFile = resolveImportFile(pathDirectory, importPath, options.includePaths);
 					if (!importFile) {
-						var err = new Error(`Cannot find file '${importPath}' from '${pathDirectory}' (includePaths: ${options.includePaths})`);
+						var err = new Error("Cannot find file '" + importPath + "' from '" + pathDirectory + "' (includePaths: " + options.includePaths + ")");
 						callback(new gutil.PluginError(PLUGIN_NAME, err));
 					}
 					promises.push(readFile(importFile, "utf8").then(function(contents) {

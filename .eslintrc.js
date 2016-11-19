@@ -15,10 +15,6 @@ module.exports = {
             2,
             "unix"
         ],
-        "quotes": [
-            2,
-            "double"
-        ],
         "semi": [
             2,
             "always"

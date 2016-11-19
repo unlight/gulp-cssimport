@@ -8,22 +8,8 @@ gulp.task("watch-eslint", ["eslint"], function() {
 
 gulp.task("eslint", function() {
 	var eslint = g.eslint;
-	var conf = {
-		rules: {
-			"no-use-before-define": [0, "nofunc"],
-			"curly": 1,
-			"no-comma-dangle": 1,
-			"no-debugger": 1,
-			"eol-last": 0,
-			"new-cap": 1,
-			"no-underscore-dangle": 0
-		},
-		env: {
-			node: true
-		}
-	};
 	gulp.src(["./gulp-cssimport.js"])
-		.pipe(eslint(conf))
+		.pipe(eslint())
 		// .pipe(eslint.failOnError())
 		.pipe(eslint.formatEach("stylish", process.stdout));
 });

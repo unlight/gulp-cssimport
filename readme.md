@@ -27,6 +27,11 @@ OPTIONS
 Array, default: `[]`  
 Additional paths to resolve imports.
 
+#### skipComments
+Boolean, default: `true`  
+gulp-cssimport plugin uses regular expressions which is fast but not solid as AST.
+If you have any unexpected result, missing imported content, etc. Try to disable this option.
+
 #### filter
 RegExp, default: `null` (no filter).  
 Process only files which match to regexp.
@@ -119,6 +124,9 @@ TODO
 
 CHANGELOG
 ---------
+5.0 [6 Oct 2016]
+- added option 'skipComments'
+
 4.0 [6 Oct 2016]
 - added option 'includePaths'
 
