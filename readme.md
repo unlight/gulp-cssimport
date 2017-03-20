@@ -1,5 +1,7 @@
 gulp-cssimport
 ==============
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/unlight/gulp-cssimport.svg)](https://greenkeeper.io/)
 Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.
 
 INSTALL
