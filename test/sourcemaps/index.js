@@ -4,13 +4,16 @@ var collect = require("collect-stream");
 var plugin = require("../..");
 var gulp = require("gulp");
 var sourcemaps = require("gulp-sourcemaps");
+var sass = require('gulp-sass');
 
 var options = {};
 
 test("Sourcemaps", function (t) {
     // var result = fs.readFileSync("result.css", { encoding: "utf8" });
-    var stream = gulp.src("style*.css")
+    var stream = gulp.src("style.scss")
         .pipe(sourcemaps.init())
+        // .pipe(sass({outputStyle: 'compressed'}))
+        .pipe(sass())
         .pipe(plugin(options))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest("./~dst"))
@@ -19,5 +22,4 @@ test("Sourcemaps", function (t) {
         t.notEqual(data.indexOf('# sourceMappingURL'), -1);
         t.end();
     });
-
 });

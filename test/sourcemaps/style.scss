@@ -1,3 +1,7 @@
+$color: blue;
 @import 'http://fonts.googleapis.com/css?family=Tangerine';
 @import "a.css";
 @import "a1.css";
+body {
+	color: $color;
+}

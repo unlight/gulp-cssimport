@@ -9,8 +9,8 @@ var collect = require("collect-stream");
 var hh = require("http-https");
 var minimatch = require("minimatch");
 var applySourceMap = require("vinyl-sourcemaps-apply");
-var MagicString = require("magic-string");
 var lookupPath = require("lookup-path");
+var Concat = require('concat-with-sourcemaps');
 
 var PLUGIN_NAME = "gulp-cssimport";
 var readFile = pify(fs.readFile);
@@ -142,32 +142,53 @@ module.exports = function cssImport(options) {
 			return Promise.all(results);
 		})
 		.then(function(results) {
-			var iterator = function() {};
+			debugger;
 			if (vinyl.sourceMap) {
-				var bundle = new MagicString.Bundle();
-				iterator = function(file, result) {
-					bundle.addSource({
-						filename: result.importPath,
-						content: new MagicString(result.contents)
-					});
-				};
+				var concat = new Concat(true, vinyl.sourceMap.file, '');
+				// concat.add(null, "// (c) John Doe");
+				// concat.add('file1.js', file1Content);
+				// concat.add('file2.js', file2Content, file2SourceMap);
+				for (var i = 0; i < file.length; i++) {
+					var fileName = null;
+					var content = file[i];
+					var sourceMap;
+					var result = results.find(el => el.index === i);
+					if (result) {
+						content = result.contents;
+					}
+					concat.add(fileName, content)
+				}
+				vinyl.contents = concat.content;
+				vinyl.sourceMap = JSON.parse(concat.sourceMap);
 			}
-			for (var i = 0; i < results.length; i++) {
-				var result = results[i];
-				var index = result.index;
-				var contents = result.contents;
-				file[index] = contents;
-				iterator(file, result);
-			}
-			vinyl.contents = new Buffer(file.join(""));
-			if (vinyl.sourceMap) {
-				var map = bundle.generateMap({
-					file: vinyl.relative,
-					includeContent: true,
-					hires: true
-				});
-				applySourceMap(vinyl, map);
-			}
+			// var iterator = function() {};
+			// if (vinyl.sourceMap) {
+			// 	var concat = new Concat(true, 'all.js', '\n');
+			// 	debugger;
+			// 	var bundle = new MagicString.Bundle();
+			// 	iterator = function(file, result) {
+			// 		bundle.addSource({
+			// 			filename: result.importPath,
+			// 			content: new MagicString(result.contents)
+			// 		});
+			// 	};
+			// }
+			// for (var i = 0; i < results.length; i++) {
+			// 	var result = results[i];
+			// 	var index = result.index;
+			// 	var contents = result.contents;
+			// 	file[index] = contents;
+			// 	iterator(file, result);
+			// }
+			// vinyl.contents = new Buffer(file.join(""));
+			// if (vinyl.sourceMap) {
+			// 	var map = bundle.generateMap({
+			// 		file: vinyl.relative,
+			// 		includeContent: true,
+			// 		hires: true
+			// 	});
+			// 	applySourceMap(vinyl, map);
+			// }
 			callback(null, vinyl);
 		})
 		.catch(function(err) {
