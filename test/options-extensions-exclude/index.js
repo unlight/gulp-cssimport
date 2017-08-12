@@ -12,20 +12,28 @@ var options2 = {
 };
 
 test("Options extensions exclude", function (t) {
-	t.plan(2);
-	var result = fs.readFileSync("result.css", { encoding: "utf8" });
+
 	var stream = gulp.src("style.css")
 		.pipe(plugin(options));
 	collect(stream, function (err, vinyls) {
 		var data = vinyls[0].contents.toString();
-		t.equal(data, result);
+		t.assert(data.indexOf("/* a.css */") !== -1);
+		t.assert(data.indexOf("@import 'b.sass'") !== -1);
+		t.assert(data.indexOf("@import 'c.less'") !== -1);
+		t.assert(data.indexOf("src: local('Tangerine Regular'), local('Tangerine-Regular')") !== -1);
+		t.assert(data.indexOf("font-size: 13px") !== -1);
 	});
 
 	var stream = gulp.src("style.css")
 		.pipe(plugin(options2));
 	collect(stream, function (err, vinyls) {
 		var data = vinyls[0].contents.toString();
-		t.equal(data, result);
+		t.assert(data.indexOf("/* a.css */") !== -1);
+		t.assert(data.indexOf("@import 'b.sass'") !== -1);
+		t.assert(data.indexOf("@import 'c.less'") !== -1);
+		t.assert(data.indexOf("src: local('Tangerine Regular'), local('Tangerine-Regular')") !== -1);
+		t.assert(data.indexOf("font-size: 13px") !== -1);
+		t.end();
 	});
 });
 

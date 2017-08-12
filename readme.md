@@ -64,6 +64,18 @@ Object, [minimatch](https://www.npmjs.com/package/minimatch) options for `matchP
 Number, default `5000`.  
 Defence from infinite recursive import.
 
+#### transform
+Function, default `null`  
+Transform function applied for each import path.  
+Signature:
+```
+(path: string, data: {match: string}) => string
+```
+Arguments:
+* `path` - string, path in import statement
+* object with data:
+  - `match` - string, matched import expression
+
 #### extensions  
 Deprecated, use `matchPattern` instead.  
 String or Array, default: `null` (process all).
@@ -124,6 +136,9 @@ TODO
 
 CHANGELOG
 ---------
+5.1 [13 Aug 2017]
+- added option 'transform'
+
 5.0 [20 Nov 2016]
 - added option 'skipComments'
 
