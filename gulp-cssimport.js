@@ -73,7 +73,7 @@ module.exports = function cssImport(options) {
                     continue;
                 }
             }
-            var match2 = /@import\s+(?:url\()?(.+(?=['"\)]))(?:\))?.*/ig.exec(match[0]);
+            var match2 = /@import\s+(?:url\()?(.+(?=['")]))(?:\))?.*/ig.exec(match[0]);
             var importPath = trim(match2[1], "'\"");
             if (transform) {
                 importPath = transform(importPath, {match: match[0]});
@@ -254,7 +254,7 @@ function isMatch(path, options) {
 }
 
 function isUrl(s) {
-    var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
     return regexp.test(s);
 }
 
