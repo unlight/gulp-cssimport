@@ -16,6 +16,7 @@ var PLUGIN_NAME = "gulp-cssimport";
 var readFile = pify(fs.readFile);
 var trim = require("lodash.trim");
 var format = require("util").format;
+var stripBom = require("strip-bom");
 
 var defaults = {
     skipComments: true,
@@ -35,15 +36,15 @@ module.exports = function cssImport(options) {
     options = deepExtend({}, defaults, options || {});
 
     if (options.extensions && !Array.isArray(options.extensions)) {
-        options.extensions = options.extensions.toString().split(",").map(function (x) {
+        options.extensions = options.extensions.toString().split(",").map(function(x) {
             return x.trim();
         });
     }
-    
+
     var stream;
     var cssCount = 0;
     var transform = (options.transform && typeof options.transform === 'function') ? options.transform : null;
-    
+
     function fileContents(vinyl, encoding, callback) {
 
         if (!stream) {
@@ -76,7 +77,7 @@ module.exports = function cssImport(options) {
             var match2 = /@import\s+(?:url\()?(.+(?=['")]))(?:\))?.*/ig.exec(match[0]);
             var importPath = trim(match2[1], "'\"");
             if (transform) {
-                importPath = transform(importPath, {match: match[0]});
+                importPath = transform(importPath, { match: match[0] });
             }
             var isMatched = isMatch(importPath, options);
             if (!isMatched) {
@@ -93,7 +94,7 @@ module.exports = function cssImport(options) {
             }
 
             (function(index) {
-                var result = {index: index, importPath: importPath};
+                var result = { index: index, importPath: importPath };
                 if (!isUrl(importPath)) {
                     var pathDirectory = path.dirname(vinyl.path);
                     var importFile = resolveImportFile(pathDirectory, importPath, options.includePaths);
@@ -108,8 +109,8 @@ module.exports = function cssImport(options) {
                     });
                 } else {
                     promises[promises.length] = new Promise(function(resolve, reject) {
-                        var req = hh.request(importPath, function (res) {
-                            collect(res, function (err, data) {
+                        var req = hh.request(importPath, function(res) {
+                            collect(res, function(err, data) {
                                 if (err) {
                                     return reject(err);
                                 }
@@ -131,54 +132,57 @@ module.exports = function cssImport(options) {
         // Adding trailing piece.
         file[file.length] = contents.slice(lastpos);
         // Waiting promises.
-        Promise.all(promises).then(function(results) {
-            for (var i = 0; i < results.length; i++) {
-                var result = results[i];
-                var vfile = new gutil.File({
-                    path: result.importFile,
-                    contents: new Buffer(result.contents)
-                });
-                (function(result) {
-                    results[i] = pify(fileContents)(vfile, null).then(function(vfile) {
-                        result.contents = vfile.contents.toString();
-                        return result;
+        Promise.all(promises)
+            .then(function(results) {
+                for (var i = 0; i < results.length; i++) {
+                    var result = results[i];
+                    // Strip BOM.
+                    result.contents = stripBom(result.contents);
+                    var vfile = new gutil.File({
+                        path: result.importFile,
+                        contents: new Buffer(result.contents)
                     });
-                })(result);
-            }
-            return Promise.all(results);
-        })
-        .then(function(results) {
-            var iterator = function() {};
-            if (vinyl.sourceMap) {
-                var bundle = new MagicString.Bundle();
-                iterator = function(file, result) {
-                    bundle.addSource({
-                        filename: result.importPath,
-                        content: new MagicString(result.contents)
+                    (function(result) {
+                        results[i] = pify(fileContents)(vfile, null).then(function(vfile) {
+                            result.contents = vfile.contents.toString();
+                            return result;
+                        });
+                    })(result);
+                }
+                return Promise.all(results);
+            })
+            .then(function(results) {
+                var iterator = function() { };
+                if (vinyl.sourceMap) {
+                    var bundle = new MagicString.Bundle();
+                    iterator = function(file, result) {
+                        bundle.addSource({
+                            filename: result.importPath,
+                            content: new MagicString(result.contents)
+                        });
+                    };
+                }
+                for (var i = 0; i < results.length; i++) {
+                    var result = results[i];
+                    var index = result.index;
+                    var contents = result.contents;
+                    file[index] = contents;
+                    iterator(file, result);
+                }
+                vinyl.contents = new Buffer(file.join(""));
+                if (vinyl.sourceMap) {
+                    var map = bundle.generateMap({
+                        file: vinyl.relative,
+                        includeContent: true,
+                        hires: true
                     });
-                };
-            }
-            for (var i = 0; i < results.length; i++) {
-                var result = results[i];
-                var index = result.index;
-                var contents = result.contents;
-                file[index] = contents;
-                iterator(file, result);
-            }
-            vinyl.contents = new Buffer(file.join(""));
-            if (vinyl.sourceMap) {
-                var map = bundle.generateMap({
-                    file: vinyl.relative,
-                    includeContent: true,
-                    hires: true
-                });
-                applySourceMap(vinyl, map);
-            }
-            callback(null, vinyl);
-        })
-        .catch(function(err) {
-            callback(new gutil.PluginError(PLUGIN_NAME, err));
-        });
+                    applySourceMap(vinyl, map);
+                }
+                callback(null, vinyl);
+            })
+            .catch(function(err) {
+                callback(new gutil.PluginError(PLUGIN_NAME, err));
+            });
     }
 
     return through.obj(fileContents);
@@ -191,7 +195,7 @@ function resolveImportFile(pathDirectory, importPath, includePaths) {
     }
     for (var i = 0; i < includePaths.length; i++) {
         var includePath = includePaths[i];
-        
+
         var d1 = path.resolve(pathDirectory, includePath);
         if (d1 === pathDirectory) {
             continue;

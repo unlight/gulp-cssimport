@@ -25,6 +25,7 @@
     "magic-string": "^0.22.4",
     "minimatch": "^3.0.4",
     "pify": "^3.0.0",
+    "strip-bom": "^3.0.0",
     "through2": "^2.0.1",
     "vinyl-sourcemaps-apply": "^0.2.1"
   },
