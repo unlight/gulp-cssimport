@@ -136,6 +136,9 @@ TODO
 
 CHANGELOG
 ---------
+6.0 [1 Sep 2017]
+- remove byte order mask from imported files
+
 5.1 [13 Aug 2017]
 - added option 'transform'
 
