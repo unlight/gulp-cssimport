@@ -4,6 +4,7 @@
   "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
+    "np": "np",
     "test": "cd test && node index.js"
   },
   "repository": {
@@ -31,11 +32,11 @@
   },
   "devDependencies": {
     "gulp": "3",
-    "gulp-bump": "2.7.0",
-    "gulp-eslint": "^4.0.0",
-    "gulp-load-plugins": "1.5.0",
+    "gulp-bump": "^3.1.0",
+    "gulp-eslint": "^4.0.2",
+    "gulp-load-plugins": "^1.5.0",
     "gulp-sourcemaps": "*",
-    "tape": "^4.8.0"
+    "tape": "^4.9.0"
   },
   "license": "MIT"
 }

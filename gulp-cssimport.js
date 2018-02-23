@@ -240,7 +240,7 @@ function isMatch(path, options) {
         var fileExt = getExtension(path);
         for (var k = 0; k < extensions.length; k++) {
             var extension = extensions[k];
-            var isInverse = extension.charAt(0) === "!";
+            var isInverse = extension.charAt(0) === '!';
             if (isInverse) {
                 extension = extension.slice(1);
             }
@@ -251,18 +251,17 @@ function isMatch(path, options) {
             }
         }
     }
-    if (typeof result === "undefined") {
+    if (typeof result === 'undefined') {
         result = true;
     }
     return result;
 }
 
 function isUrl(s) {
-    var regexp = /(http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
-    return regexp.test(s);
+    return /^(http|https):\/\//.test(s);
 }
 
 function getExtension(p) {
     p = String(p);
-    return p.substr(p.lastIndexOf(".") + 1);
+    return p.substr(p.lastIndexOf('.') + 1);
 }
