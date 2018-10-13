@@ -1,14 +1,12 @@
 # gulp-cssimport
 Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.
 
-INSTALL
--------
+## INSTALL
 ```sh
 npm install gulp-cssimport
 ```
 
-USAGE
------
+## USAGE
 ```js
 var gulp = require("gulp");
 var cssimport = require("gulp-cssimport");
@@ -20,8 +18,7 @@ gulp.task("import", function() {
 }); 
 ```
 
-OPTIONS
--------
+## OPTIONS
 #### includePaths
 Array, default: `[]`  
 Additional paths to resolve imports.
@@ -90,8 +87,7 @@ var options = {
 };
 ```
 
-TIPS AND TRICKS
----------------
+## TIPS AND TRICKS
 **Be more precise and do not add to src importing file without necessary:**  
 ```css
 // main.css
@@ -106,15 +102,13 @@ Do instead: `gulp.src("main.css")`
 If you need exclude files from import, try use `filter` only option (it is faster) and avoid others.
 
 
-POSTCSS
--------
+## POSTCSS
 There are plugins for [PostCSS](https://github.com/postcss/postcss) which do same job or even better:
 * [postcss-import](https://github.com/postcss/postcss-import) inlines the stylesheets referred to by `@import` rules
 * [postcss-import-url](https://github.com/unlight/postcss-import-url) inlines remote files.
 
 
-SIMILAR PROJECTS
-----------------
+## SIMILAR PROJECTS
 https://npmjs.org/package/gulp-coimport/  
 https://npmjs.org/package/gulp-concat-css/  
 https://github.com/yuguo/gulp-import-css/  
@@ -125,53 +119,11 @@ https://github.com/jfromaniello/css-import
 https://github.com/mariocasciaro/gulp-concat-css  
 
 
-KNOWN ISSUES
-------------
+## KNOWN ISSUES
 - Cannot resolve `@import 'foo.css' (min-width: 25em);`
 
-TODO
-----
+## TODO
 - Cache
 
-CHANGELOG
----------
-6.0.1 [23 Feb 2018]
-- fixed potential catastrophic backtracking vulnerability
-
-6.0.0 [01 Sep 2017]
-- remove byte order mask from imported files
-
-5.1.0 [13 Aug 2017]
-- added option 'transform'
-
-5.0.0 [20 Nov 2016]
-- added option 'skipComments'
-
-4.0.0 [06 Oct 2016]
-- added option 'includePaths'
-
-3.0.0 [28 Feb 2016]
-- removed node streams support, now only gulp
-- removed directory option
-- added sourcemaps support
-- fixed bogus destination bugs
-
-2.0.0 [30 Jun 2015]
-- changed parse algorithm
-- can handle recursive import
-- can handle minified css files
-- added option 'matchPattern'
-
-1.3.0 [14 Nov 2014]
-- added option 'extensions'
-- added option 'filter'
-
-1.2.0 [15 Feb 2014]
-- fixed processing urls
-
-1.1.0 [15 Feb 2014]
-- switched to through2
-- process files asynchronously
-
-1.0.0 [12 Feb 2014]
-- first release
+## CHANGELOG
+See [CHANGELOG](CHANGELOG.md)
