@@ -1,3 +1,19 @@
+## 7.0.0 (2018-10-13)
+
+* docs: Moved changelog ([6584733](https://github.com/unlight/gulp-cssimport/commit/6584733))
+* feat: Removed gulp-util ([180a775](https://github.com/unlight/gulp-cssimport/commit/180a775)), closes [#28](https://github.com/unlight/gulp-cssimport/issues/28) [#29](https://github.com/unlight/gulp-cssimport/issues/29)
+* 6.0.1 ([1e49903](https://github.com/unlight/gulp-cssimport/commit/1e49903))
+* Broken url test ([36ea40a](https://github.com/unlight/gulp-cssimport/commit/36ea40a))
+* Fixed potential catastrophic backtracking vulnerability ([b354458](https://github.com/unlight/gulp-cssimport/commit/b354458))
+* Merge remote-tracking branch 'prog1dev/master' ([2e19116](https://github.com/unlight/gulp-cssimport/commit/2e19116))
+* Replace deprecated gulp-util ([d29729e](https://github.com/unlight/gulp-cssimport/commit/d29729e))
+* Updated some dependencies ([5ec88e2](https://github.com/unlight/gulp-cssimport/commit/5ec88e2))
+
+
+### BREAKING CHANGE
+
+* Removed deprecated gulp-util
+
 ## 6.0.1 [23 Feb 2018]
 * fixed potential catastrophic backtracking vulnerability
 
