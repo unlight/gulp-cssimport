@@ -4,8 +4,8 @@
   "description": "Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.",
   "main": "gulp-cssimport.js",
   "scripts": {
-    "np": "np",
-    "test": "cd test && node index.js"
+    "test": "cd test && node index.js",
+    "prepublishOnly": "sed -i -e 's/devDependencies/_devDependencies/g' package.json"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,6 @@
     "collect-stream": "^1.2.1",
     "deep-extend": "^0.6.0",
     "plugin-error": "^0.1.2",
-    "minimist": "^1.2.0",
     "vinyl": "^2.2.0",
     "http-https": "^1.0.0",
     "lodash.trim": "^4.5.1",
@@ -33,11 +32,44 @@
     "vinyl-sourcemaps-apply": "^0.2.1"
   },
   "devDependencies": {
-    "gulp": "^4.0.0",
-    "gulp-bump": "^3.1.1",
-    "gulp-eslint": "^5.0.0",
-    "gulp-load-plugins": "^1.5.0",
-    "tape": "^4.9.1"
+    "tape": "^4.9.1",
+    "@semantic-release/changelog": "^3.0.0",
+    "@semantic-release/git": "^7.0.4",
+    "semantic-release": "^15.9.15",
+    "@semantic-release/npm": "^5.0.4"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "release": {
+    "generateNotes": {
+      "writerOpts": {
+        "__keep": "me"
+      }
+    },
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/github",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "publish": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "success": [
+      "@semantic-release/github"
+    ],
+    "fail": [
+      "@semantic-release/github"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
 }
