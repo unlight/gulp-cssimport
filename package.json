@@ -19,7 +19,9 @@
   "dependencies": {
     "collect-stream": "^1.2.1",
     "deep-extend": "^0.5.0",
-    "gulp-util": "*",
+    "plugin-error": "^0.1.2",
+    "minimist": "^1.2.0",
+    "vinyl": "^2.1.0",
     "http-https": "^1.0.0",
     "lodash.trim": "^4.5.1",
     "lookup-path": "^0.3.1",
