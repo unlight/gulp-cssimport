@@ -1,5 +1,4 @@
-gulp-cssimport
-==============
+# gulp-cssimport
 Parses a CSS file, finds imports, grabs the content of the linked file and replaces the import statement with it.
 
 INSTALL

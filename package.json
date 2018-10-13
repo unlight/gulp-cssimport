@@ -18,12 +18,12 @@
   ],
   "dependencies": {
     "collect-stream": "^1.2.1",
-    "deep-extend": "^0.5.0",
+    "deep-extend": "^0.6.0",
     "gulp-util": "*",
     "http-https": "^1.0.0",
     "lodash.trim": "^4.5.1",
     "lookup-path": "^0.3.1",
-    "magic-string": "^0.22.4",
+    "magic-string": "^0.25.1",
     "minimatch": "^3.0.4",
     "pify": "^3.0.0",
     "strip-bom": "^3.0.0",
@@ -32,11 +32,11 @@
   },
   "devDependencies": {
     "gulp": "3",
-    "gulp-bump": "^3.1.0",
-    "gulp-eslint": "^4.0.2",
+    "gulp-bump": "^3.1.1",
+    "gulp-eslint": "^5.0.0",
     "gulp-load-plugins": "^1.5.0",
     "gulp-sourcemaps": "*",
-    "tape": "^4.9.0"
+    "tape": "^4.9.1"
   },
   "license": "MIT"
 }
