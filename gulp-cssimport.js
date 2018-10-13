@@ -4,7 +4,8 @@ var path = require("path");
 var deepExtend = require("deep-extend");
 var fs = require("fs");
 var pify = require("pify");
-var gutil = require("gulp-util");
+var Vinyl = require("vinyl");
+var PluginError = require("plugin-error");
 var collect = require("collect-stream");
 var hh = require("http-https");
 var minimatch = require("minimatch");
@@ -100,7 +101,7 @@ module.exports = function cssImport(options) {
                     var importFile = resolveImportFile(pathDirectory, importPath, options.includePaths);
                     if (!importFile) {
                         var err = new Error("Cannot find file '" + importPath + "' from '" + pathDirectory + "' (includePaths: " + options.includePaths + ")");
-                        callback(new gutil.PluginError(PLUGIN_NAME, err));
+                        callback(new PluginError(PLUGIN_NAME, err));
                     }
                     promises[promises.length] = readFile(importFile, "utf8").then(function(contents) {
                         result.importFile = importFile;
@@ -138,7 +139,7 @@ module.exports = function cssImport(options) {
                     var result = results[i];
                     // Strip BOM.
                     result.contents = stripBom(result.contents);
-                    var vfile = new gutil.File({
+                    var vfile = new Vinyl({
                         path: result.importFile,
                         contents: new Buffer(result.contents)
                     });
@@ -181,7 +182,7 @@ module.exports = function cssImport(options) {
                 callback(null, vinyl);
             })
             .catch(function(err) {
-                callback(new gutil.PluginError(PLUGIN_NAME, err));
+                callback(new PluginError(PLUGIN_NAME, err));
             });
     }
 

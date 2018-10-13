@@ -1,6 +1,7 @@
 var gulp = require("gulp");
 var gutil = require("gulp-util");
 var g = require("gulp-load-plugins")();
+var argv = require('minimist')(process.argv.slice(2));
 
 gulp.task("watch-eslint", ["eslint"], function() {
 	gulp.watch(["./gulp-cssimport.js"], ["eslint"]);
@@ -15,7 +16,6 @@ gulp.task("eslint", function() {
 });
 
 gulp.task("bump", function() {
-	var argv = gutil.env;
 	var options = {
 		type: "patch"
 	};
