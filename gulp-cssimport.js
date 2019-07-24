@@ -31,7 +31,7 @@ var defaults = {
     limit: 5000,
     transform: null
 };
-
+var rootPath = '';
 module.exports = function cssImport(options) {
 
     options = deepExtend({}, defaults, options || {});
@@ -47,6 +47,7 @@ module.exports = function cssImport(options) {
     var transform = (options.transform && typeof options.transform === 'function') ? options.transform : null;
 
     function fileContents(vinyl, encoding, callback) {
+        if(rootPath === '') rootPath = vinyl.path;
 
         if (!stream) {
             stream = this;
@@ -105,6 +106,13 @@ module.exports = function cssImport(options) {
                     }
                     promises[promises.length] = readFile(importFile, "utf8").then(function(contents) {
                         result.importFile = importFile;
+                        var regCssIntentUrl = /(?:url\()(.+(?=['")]))(?:\))?.*/ig;
+                        var matchCssIntentUrl;
+                        while( (matchCssIntentUrl = regCssIntentUrl.exec(contents)) !== null){
+                            var cssIntentUrlPath = removeQuota(matchCssIntentUrl[1]);
+                            var computedCssIntentUrlPath = computeAbsolutePathFromRelativePath(importFile, cssIntentUrlPath);
+                            contents = contents.replace(cssIntentUrlPath, computeRelativePathFromAbsolutePath(rootPath, computedCssIntentUrlPath))
+                        }
                         result.contents = contents;
                         return result;
                     });
@@ -265,4 +273,54 @@ function isUrl(s) {
 function getExtension(p) {
     p = String(p);
     return p.substr(p.lastIndexOf('.') + 1);
+}
+
+function removeQuota(str) {
+    var regStart = /^('|")/;
+    var regEnd = /('|")$/;
+    while(regStart.test(str)) {
+        str = str.replace(regStart, '');
+    }
+    while(regEnd.test(str)){
+        str = str.replace(regEnd, '')
+    }
+    return str
+}
+
+function computeAbsolutePathFromRelativePath(absolutePath, relativePath) {
+    if(relativePath.startsWith('/')){
+        return relativePath
+    }
+    var dir = path.dirname(absolutePath) + '/';
+    if(relativePath.startsWith('./')){
+        return dir+relativePath.replace(/^\.\//, '')
+    }
+    while(relativePath.startsWith('../')){
+        relativePath = relativePath.replace(/^\.\.\//, '');
+        dir = path.dirname(dir) + '/'
+    }
+    return dir + relativePath
+}
+
+function computeRelativePathFromAbsolutePath(basePath, path) {
+    var commonPath = findLongestPrefix(basePath, path);
+    basePath = basePath.replace(commonPath, '');
+    path = path.replace(commonPath, '');
+    var level = basePath.split('/').length;
+    if(level <= 2) return '.'.repeat(level - 1) + path;
+    return '../'.repeat(level - 1).replace(/\/$/, '') + path
+}
+
+function findLongestPrefix(str1, str2) {
+    str1 = str1.split('/');
+    str2 = str2.split('/');
+    var len = str1.length < str2.length ? str1.length : str2.length;
+    var i = 0;
+    for(;i< len; i++){
+        if(str1[i] !== str2[i]){
+            break;
+        }
+    }
+    str1.length = i;
+    return str1.join('/')
 }
